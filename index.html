@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium 3D Team Matching Studio - Shell Shuffle Edition</title>
+    <title>3D Wooden Matching Studio - Screen Fixed</title>
     <style>
         /* CSS: Main Layout */
         html,
@@ -14,13 +14,15 @@
             width: 100%;
             height: 100%;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
             background-color: #1a252f;
         }
 
-        body {
+        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: Elements တွေ Layout မရှုပ်ထွေးအောင် ဆောက်တည်ပုံစနစ်ကို အသစ်ပြောင်းလဲခြင်း --- */
+        .app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
@@ -30,7 +32,6 @@
             background-color: white;
             width: 90%;
             max-width: 700px;
-            margin: 20px auto;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -38,6 +39,7 @@
             box-sizing: border-box;
             max-height: 90vh;
             overflow-y: auto;
+            z-index: 10;
         }
 
         h1 {
@@ -128,21 +130,43 @@
             border-radius: 6px;
         }
 
-        /* Setup Team Section */
+        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: Screen ဘယ်လောက်ကြီးကြီး အလယ်ခေါင်တည့်တည့်မှာပဲ ပေါ်စေမည့် Setup Window စနစ် --- */
         .setup-section {
             display: none;
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            /* Screen ရဲ့ အလယ်ဗဟိုကို ညှိပစ်ခြင်း */
             background: white;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            z-index: 100;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            z-index: 1000 !important;
+            /* အခြား Elements များထက် အမြဲအပေါ်ရောက်စေရန် */
             width: 90%;
             max-width: 450px;
             text-align: center;
+            box-sizing: border-box;
+        }
+
+        .close-setup-btn {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .mode-options {
@@ -150,6 +174,7 @@
             gap: 20px;
             justify-content: center;
             margin-bottom: 20px;
+            margin-top: 15px;
         }
 
         .mode-btn {
@@ -217,7 +242,10 @@
             display: none;
             width: 100%;
             height: 100%;
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 20;
         }
 
         /* Wooden Chessboard Background */
@@ -402,7 +430,7 @@
             }
         }
 
-        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: ခွက်လှည့်ကစားနည်းလိုမျိုး ကတ်ပြားများ ဘယ်ညာအပြန်အလှန် နေရာချင်း ဖြတ်ကျော်မွှေမည့် Animation --- */
+        /* Shell Shuffle Animation */
         .card-container.shuffle-left-right {
             animation: shellShuffle 0.6s ease-in-out forwards;
         }
@@ -441,7 +469,7 @@
             border-radius: 15px;
             text-align: center;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-            z-index: 200;
+            z-index: 2000;
             width: 80%;
             max-width: 500px;
         }
@@ -483,69 +511,74 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            z-index: 90;
+            z-index: 900;
         }
     </style>
 </head>
 
 <body>
 
-    <div id="creatorPage" class="creator-section">
-        <h1> My Educational Game Studio</h1>
-        <p class="subtitle">Create your game with unlimited words and images in Full-Screen.</p>
-        <div id="wordInputsContainer"></div>
-        <button class="btn btn-add" onclick="addNewPairRow()">➕ Add New Pair</button>
-        <button class="btn btn-generate" onclick="openGameSetup()">Generate Full-Screen Game 🚀</button>
-    </div>
+    <div class="app-container">
 
-    <div id="overlayBg" class="overlay-bg"></div>
-
-    <div id="setupPopup" class="setup-section">
-        <h2>🎮 Select Game Mode</h2>
-        <div class="mode-options">
-            <button class="mode-btn active" id="btnSolo" onclick="setMode('solo')">Solo Player</button>
-            <button class="mode-btn" id="btnTeam" onclick="setMode('team')">Team Versus</button>
+        <div id="creatorPage" class="creator-section">
+            <h1> My Educational Game Studio</h1>
+            <p class="subtitle">Create your game with unlimited words and images in Full-Screen.</p>
+            <div id="wordInputsContainer"></div>
+            <button class="btn btn-add" onclick="addNewPairRow()">➕ Add New Pair</button>
+            <button class="btn btn-generate" onclick="validateAndOpenSetup()">Generate Full-Screen Game 🚀</button>
         </div>
-        <div id="teamInputs" class="team-inputs">
-            <label>Team 1 Name:</label>
-            <input type="text" id="t1Name" value="Team A">
-            <label>Team 2 Name:</label>
-            <input type="text" id="t2Name" value="Team B">
-            <label>Who plays first?</label>
-            <div class="turn-select">
-                <button class="turn-btn active" id="btnT1Turn" onclick="setFirstTurn(1)">Team 1</button>
-                <button class="turn-btn" id="btnT2Turn" onclick="setFirstTurn(2)">Team 2</button>
+
+        <div id="overlayBg" class="overlay-bg"></div>
+
+        <div id="setupPopup" class="setup-section">
+            <button class="close-setup-btn" onclick="closeGameSetup()">✕</button>
+            <h2 style="margin-top: 10px;">🎮 Select Game Mode</h2>
+            <div class="mode-options">
+                <button class="mode-btn active" id="btnSolo" onclick="setMode('solo')">Solo Player</button>
+                <button class="mode-btn" id="btnTeam" onclick="setMode('team')">Team Versus</button>
             </div>
-        </div>
-        <button class="btn btn-generate" style="margin-top:25px;" onclick="startGameNow()">Start Game 🏁</button>
-    </div>
-
-    <div id="gamePage" class="game-section">
-        <div class="game-arena">
-            <div class="scoreboard" id="scoreboard">
-                <div class="team-score-card" id="scoreCard1">
-                    <div id="displayName1">Player</div>
-                    <div class="score-num" id="scoreNum1">0</div>
-                </div>
-                <div class="team-score-card" id="scoreCard2" style="display:none;">
-                    <div id="displayName2">Team B</div>
-                    <div class="score-num" id="scoreNum2">0</div>
+            <div id="teamInputs" class="team-inputs">
+                <label>Team 1 Name:</label>
+                <input type="text" id="t1Name" value="Team A">
+                <label>Team 2 Name:</label>
+                <input type="text" id="t2Name" value="Team B">
+                <label>Who plays first?</label>
+                <div class="turn-select">
+                    <button class="turn-btn active" id="btnT1Turn" onclick="setFirstTurn(1)">Team 1</button>
+                    <button class="turn-btn" id="btnT2Turn" onclick="setFirstTurn(2)">Team 2</button>
                 </div>
             </div>
+            <button class="btn btn-generate" style="margin-top:25px;" onclick="startGameNow()">Start Game 🏁</button>
+        </div>
 
-            <div class="match-container" id="gameBoard"></div>
+        <div id="gamePage" class="game-section">
+            <div class="game-arena">
+                <div class="scoreboard" id="scoreboard">
+                    <div class="team-score-card" id="scoreCard1">
+                        <div id="displayName1">Player</div>
+                        <div class="score-num" id="scoreNum1">0</div>
+                    </div>
+                    <div class="team-score-card" id="scoreCard2" style="display:none;">
+                        <div id="displayName2">Team B</div>
+                        <div class="score-num" id="scoreNum2">0</div>
+                    </div>
+                </div>
 
-            <div class="game-controls">
-                <button class="btn btn-back" onclick="showCreator()">⬅ Edit Game</button>
-                <button class="btn btn-save-file" onclick="exportCurrentGame()">📥 Save Game File</button>
+                <div class="match-container" id="gameBoard"></div>
+
+                <div class="game-controls">
+                    <button class="btn btn-back" onclick="showCreator()">⬅ Edit Game</button>
+                    <button class="btn btn-save-file" onclick="exportCurrentGame()">📥 Save Game File</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="endGamePopup" class="end-game-popup">
-        <h2 id="winTitle">🏆 Congratulations!</h2>
-        <p id="winDetails">Game Completed successfully!</p>
-        <button class="btn btn-restart" onclick="restartGameWithShuffle()">🔄 Play Again (Shuffle Cards)</button>
+        <div id="endGamePopup" class="end-game-popup">
+            <h2 id="winTitle">🏆 Congratulations!</h2>
+            <p id="winDetails">Game Completed successfully!</p>
+            <button class="btn btn-restart" onclick="restartGameWithShuffle()">🔄 Play Again (Shuffle Cards)</button>
+        </div>
+
     </div>
 
     <script id="preloadedData">const preloadedPairs = [];</script>
@@ -560,52 +593,58 @@
         let totalMatches = 0;
         let matchesFound = 0;
 
-        // --- ပြင်ဆင်လိုက်သည့်နေရာ: Game Show အသံစစ်စစ်ထွက်မည့် Electronic Buzzer Audio Engine ---
         const AudioFX = {
             ctx: null,
             init() { if (!this.ctx) { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } },
             playFlip() {
-                this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(500, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(700, this.ctx.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.08, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
-                osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+                try {
+                    this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(500, this.ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(700, this.ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.08, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+                    osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+                } catch (e) { console.log(e); }
             },
             playCorrect() {
-                // Game Show မှန်ကန်ကြောင်းပြသည့် တုံးတုံး တင်တင်! Buzzer သံစဉ်ဆင့်
-                this.init(); const t = this.ctx.currentTime;
-                const tone = (freq, start, duration) => {
-                    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-                    osc.type = 'square'; osc.frequency.setValueAtTime(freq, start);
-                    gain.gain.setValueAtTime(0.08, start); gain.gain.linearRampToValueAtTime(0.001, start + duration);
-                    osc.connect(gain); gain.connect(this.ctx.destination); osc.start(start); osc.stop(start + duration);
-                };
-                tone(523.25, t, 0.1); tone(523.25, t + 0.12, 0.1); tone(659.25, t + 0.24, 0.4);
+                try {
+                    this.init(); const t = this.ctx.currentTime;
+                    const tone = (freq, start, duration) => {
+                        const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                        osc.type = 'square'; osc.frequency.setValueAtTime(freq, start);
+                        gain.gain.setValueAtTime(0.08, start); gain.gain.linearRampToValueAtTime(0.001, start + duration);
+                        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(start); osc.stop(start + duration);
+                    };
+                    tone(523.25, t, 0.1); tone(523.25, t + 0.12, 0.1); tone(659.25, t + 0.24, 0.4);
+                } catch (e) { console.log(e); }
             },
             playWrong() {
-                // တကယ့် အမှား Buzzer ဝူးးးးးးးးး! သံအုန်းကြီး
-                this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
-                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.45);
-                gain.gain.setValueAtTime(0.12, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.45);
-                osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.45);
+                try {
+                    this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, this.ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.45);
+                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.45);
+                    osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.45);
+                } catch (e) { console.log(e); }
             },
             playShuffle() {
-                this.init(); let t = this.ctx.currentTime;
-                for (let i = 0; i < 12; i++) {
-                    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain(); osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(300 + Math.random() * 200, t + (i * 0.05));
-                    gain.gain.setValueAtTime(0.04, t + (i * 0.05)); gain.gain.linearRampToValueAtTime(0.001, t + (i * 0.05) + 0.04);
-                    osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t + (i * 0.05)); osc.stop(t + (i * 0.05) + 0.04);
-                }
+                try {
+                    this.init(); let t = this.ctx.currentTime;
+                    for (let i = 0; i < 12; i++) {
+                        const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain(); osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(300 + Math.random() * 200, t + (i * 0.05));
+                        gain.gain.setValueAtTime(0.04, t + (i * 0.05)); gain.gain.linearRampToValueAtTime(0.001, t + (i * 0.05) + 0.04);
+                        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t + (i * 0.05)); osc.stop(t + (i * 0.05) + 0.04);
+                    }
+                } catch (e) { console.log(e); }
             }
         };
 
         window.onload = function () {
             if (typeof preloadedPairs !== 'undefined' && preloadedPairs.length > 0) {
                 preloadedPairs.forEach(pair => { addNewPairRow(pair.a, pair.b); });
-                openGameSetup();
-            } else {
+            }
+            const rows = document.querySelectorAll(".word-pair-row");
+            if (rows.length === 0) {
                 for (let i = 0; i < 3; i++) { addNewPairRow(); }
             }
         };
@@ -630,9 +669,32 @@
             if (row) row.remove();
         }
 
-        function openGameSetup() {
+        function validateAndOpenSetup() {
+            const rows = document.querySelectorAll(".word-pair-row");
+            activePairsData = [];
+            let rowId = 0;
+
+            rows.forEach((row) => {
+                const inputA = row.querySelector(".input-word-a").value.trim();
+                const inputB = row.querySelector(".input-word-b").value.trim();
+                if (inputA !== "" && inputB !== "") {
+                    activePairsData.push({ id: rowId, a: inputA, b: inputB });
+                    rowId++;
+                }
+            });
+
+            if (activePairsData.length === 0) {
+                alert("Please enter at least one complete word pair before generating!");
+                return;
+            }
+
             document.getElementById("overlayBg").style.display = "block";
             document.getElementById("setupPopup").style.display = "block";
+        }
+
+        function closeGameSetup() {
+            document.getElementById("overlayBg").style.display = "none";
+            document.getElementById("setupPopup").style.display = "none";
         }
 
         function setMode(mode) {
@@ -658,22 +720,6 @@
         function isImageUrl(text) { return text.startsWith("http://") || text.startsWith("https://") || text.includes("data:image"); }
 
         function startGameNow() {
-            const rows = document.querySelectorAll(".word-pair-row");
-            activePairsData = [];
-            let isValid = true;
-
-            rows.forEach((row, index) => {
-                const inputA = row.querySelector(".input-word-a").value.trim();
-                const inputB = row.querySelector(".input-word-b").value.trim();
-                if (inputA && inputB) { activePairsData.push({ id: index, a: inputA, b: inputB }); }
-                else if (inputA || inputB) { isValid = false; }
-            });
-
-            if (!isValid || activePairsData.length === 0) {
-                alert("Please fill both sides of the word pairs, or delete the empty rows!");
-                return;
-            }
-
             document.getElementById("setupPopup").style.display = "none";
             document.getElementById("overlayBg").style.display = "none";
             document.getElementById("creatorPage").style.display = "none";
@@ -699,7 +745,7 @@
             matchesFound = 0;
 
             buildGameBoard();
-            triggerShellShuffleAnimation(); // ဖဲမွှေသည့် animation စတင်ခြင်း
+            triggerShellShuffleAnimation();
         }
 
         function updateTurnUI() {
@@ -756,16 +802,13 @@
                 container.appendChild(inner);
 
                 container.onclick = function () {
-                    // ကတ်နှစ်ခုလုံး လှန်ထားစဉ် သို့မဟုတ် မှန်ပြီးသားကတ်ဖြစ်ပါက နှိပ်မရအောင် တားဆီးခြင်း
                     if (container.classList.contains("is-flipped") || container.classList.contains("fall-down") || flippedCards.length === 2) return;
 
                     AudioFX.playFlip();
                     container.classList.add("is-flipped");
                     flippedCards.push(container);
 
-                    // --- ပြင်ဆင်လိုက်သည့်နေရာ: ကတ် ၂ ခုလုံး သေသေချာချာ လှန်ပြီးမှသာ Logic စစ်ဆေးခြင်း ---
                     if (flippedCards.length === 2) {
-                        // ကတ်အနောက်ဘက် လှည့်ထွက်လာသည့် Animation စက္ကန့် (400ms) ပြည့်အောင် စောင့်ပြီးမှ စစ်ဆေးခြင်း
                         setTimeout(checkMatchLogic, 400);
                     }
                 };
@@ -773,36 +816,28 @@
             });
         }
 
-        // --- ပြင်ဆင်လိုက်သည့်နေရာ: ကတ်များ ဘယ်ညာ၊ အထက်အောက် လျှောတိုက် လှည့်မွှေမည့် ခွက်လှည့် Animation Logic ---
         function triggerShellShuffleAnimation() {
             AudioFX.playShuffle();
             const containers = document.querySelectorAll(".card-container");
-
-            containers.forEach((card, i) => {
-                // ကတ်တစ်ခုချင်းစီအတွက် လှုပ်ရှားမည့် စတုရန်းလမ်းကြောင်းများကို Random တွက်ချက်ခြင်း
+            containers.forEach((card) => {
                 const randomX = (Math.random() * 160 - 80) + 'px';
                 const randomY = (Math.random() * 120 - 60) + 'px';
-
                 card.style.setProperty('--move-x', randomX);
                 card.style.setProperty('--move-y', randomY);
                 card.classList.add("shuffle-left-right");
-
-                // စက္ကန့်ပြည့်လျှင် Animation ဖြုတ်ပေးခြင်း
-                setTimeout(() => {
-                    card.classList.remove("shuffle-left-right");
-                }, 600);
+                setTimeout(() => { card.classList.remove("shuffle-left-right"); }, 600);
             });
         }
 
         function checkMatchLogic() {
             const [card1, card2] = flippedCards;
+            if (!card1 || !card2) return;
 
             if (card1.dataset.id === card2.dataset.id) {
-                // ကတ်နှစ်ခုလုံး လှန်ပြီးမှသာ ✓ ခြစ်ရာကို အပေါ်က တပ်ပေးခြင်း
                 card1.querySelector(".feedback-correct").style.opacity = "1";
                 card2.querySelector(".feedback-correct").style.opacity = "1";
 
-                AudioFX.playCorrect(); // အောင်ပွဲခံ Buzzer နှစ်ချက်ဆင့်သံ
+                AudioFX.playCorrect();
                 scores[activeTurn]++;
                 document.getElementById(`scoreNum${activeTurn}`).innerText = scores[activeTurn];
                 matchesFound++;
@@ -815,11 +850,10 @@
                 }, 600);
 
             } else {
-                // ကတ်နှစ်ခုလုံး လှန်ပြီးမှသာ ✗ ခြစ်ရာကို ပြသခြင်း
                 card1.querySelector(".feedback-wrong").style.opacity = "1";
                 card2.querySelector(".feedback-wrong").style.opacity = "1";
 
-                AudioFX.playWrong(); // အမှား Buzzer သံအုန်းကြီး
+                AudioFX.playWrong();
 
                 setTimeout(() => {
                     card1.querySelector(".feedback-wrong").style.opacity = "0";
@@ -868,7 +902,7 @@
             }
 
             buildGameBoard();
-            triggerShellShuffleAnimation(); // ပြန်ဆော့တိုင်း ကတ်များကို ခွက်လှည့်သလို မွှေနှောက်ခြင်း
+            triggerShellShuffleAnimation();
         }
 
         function exportCurrentGame() {

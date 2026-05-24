@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Wooden Matching Studio - Screen Fixed</title>
+    <style>
+        /* CSS: Main Layout */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a252f;
+        }
+
+        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: Elements တွေ Layout မရှုပ်ထွေးအောင် ဆောက်တည်ပုံစနစ်ကို အသစ်ပြောင်းလဲခြင်း --- */
+        .app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Creator Section */
+        .creator-section {
+            background-color: white;
+            width: 90%;
+            max-width: 700px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            box-sizing: border-box;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .word-pair-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pair-number {
+            font-weight: bold;
+            color: #64748b;
+            min-width: 60px;
+        }
+
+        .word-pair-row input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-add {
+            background-color: #3498db;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .btn-generate {
+            background-color: #2ecc71;
+            color: white;
+            width: 100%;
+            font-size: 18px;
+            margin-top: 15px;
+        }
+
+        .btn-back {
+            background-color: #7f8c8d;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .btn-save-file {
+            background-color: #e67e22;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: Screen ဘယ်လောက်ကြီးကြီး အလယ်ခေါင်တည့်တည့်မှာပဲ ပေါ်စေမည့် Setup Window စနစ် --- */
+        .setup-section {
+            display: none;
+            position: fixed;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            /* Screen ရဲ့ အလယ်ဗဟိုကို ညှိပစ်ခြင်း */
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+            z-index: 1000 !important;
+            /* အခြား Elements များထက် အမြဲအပေါ်ရောက်စေရန် */
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .close-setup-btn {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .mode-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            margin-top: 15px;
+        }
+
+        .mode-btn {
+            padding: 15px 25px;
+            border: 2px solid #3498db;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .mode-btn.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .team-inputs {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .team-inputs label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            color: #34495e;
+        }
+
+        .team-inputs input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .turn-select {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .turn-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            background: #f8fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .turn-btn.active {
+            background: #e67e22;
+            color: white;
+            border-color: #d35400;
+        }
+
+        /* Game Section */
+        .game-section {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 20;
+        }
+
+        /* Wooden Chessboard Background */
+        .game-arena {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            box-sizing: border-box;
+            background-color: #cd853f;
+            background-image:
+                linear-gradient(45deg, #8b4513 25%, transparent 25%),
+                linear-gradient(-45deg, #8b4513 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #8b4513 75%),
+                linear-gradient(-45deg, transparent 75%, #8b4513 75%);
+            background-size: 100px 100px;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Scoreboard Header */
+        .scoreboard {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            justify-content: space-around;
+            background: rgba(44, 62, 80, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffffff;
+            color: white;
+            z-index: 5;
+        }
+
+        .team-score-card {
+            padding: 5px 20px;
+            border-radius: 8px;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .team-score-card.active-turn {
+            background: #e67e22;
+            box-shadow: 0 0 15px #e67e22;
+            animation: blink 1.5s infinite alternate;
+        }
+
+        .score-num {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .match-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            perspective: 1200px;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* 3D Card Flip Container */
+        .card-container {
+            height: 130px;
+            perspective: 1200px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
+            transform-style: preserve-3d;
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+        }
+
+        .card-container.is-flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        /* Card Front - Dark Wood Design */
+        .card-front {
+            background-color: #4a2711;
+            background-image: linear-gradient(0deg, #3d1f0d 0%, #573018 100%);
+            color: #f1c40f;
+            font-size: 42px;
+            text-shadow: 2px 3px 4px rgba(0, 0, 0, 0.6);
+            border: 3px solid #2b1407;
+            box-shadow: inset 0 2px 5px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Card Back */
+        .card-back {
+            background: linear-gradient(135deg, #1abc9c, #2ecc71);
+            color: white;
+            font-size: 20px;
+            transform: rotateY(180deg);
+            word-break: break-word;
+            overflow: hidden;
+            border: 3px solid #ffffff;
+            position: relative;
+        }
+
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: white;
+        }
+
+        /* Feedback Layers */
+        .feedback-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 75px;
+            font-weight: bold;
+            z-index: 15;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 8px;
+            transition: opacity 0.1s ease-in-out;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .feedback-correct {
+            color: #2ecc71;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .feedback-wrong {
+            color: #e74c3c;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Gravity Fall Animation */
+        .card-container.fall-down .card-inner {
+            animation: fallAnimation 0.6s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+        }
+
+        @keyframes fallAnimation {
+            0% {
+                transform: rotateY(180deg) translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotateY(180deg) translateY(400px) rotate(15deg);
+                opacity: 0;
+            }
+        }
+
+        /* Shell Shuffle Animation */
+        .card-container.shuffle-left-right {
+            animation: shellShuffle 0.6s ease-in-out forwards;
+        }
+
+        @keyframes shellShuffle {
+            0% {
+                transform: translate(0, 0) scale(1);
+                z-index: 1;
+            }
+
+            30% {
+                transform: translate(var(--move-x), var(--move-y)) scale(1.15);
+                z-index: 10;
+            }
+
+            70% {
+                transform: translate(var(--move-x), var(--move-y)) scale(1.15);
+                z-index: 10;
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1);
+                z-index: 1;
+            }
+        }
+
+        /* End Game Alert Window */
+        .end-game-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .end-game-popup h2 {
+            color: #2c3e50;
+            font-size: 36px;
+            margin: 0 0 15px 0;
+        }
+
+        .end-game-popup p {
+            font-size: 20px;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .btn-restart {
+            background-color: #2ecc71;
+            color: white;
+            font-size: 20px;
+            padding: 15px 40px;
+            width: auto;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .game-controls {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 5;
+        }
+
+        .overlay-bg {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 900;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <div id="creatorPage" class="creator-section" style="display: none;">
+            <h1> My Educational Game Studio</h1>
+            <p class="subtitle">Create your game with unlimited words and images in Full-Screen.</p>
+            <div id="wordInputsContainer"><div class="word-pair-row" id="pairRow_1">
+                <span class="pair-number">Pair 1</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(1)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_2">
+                <span class="pair-number">Pair 2</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(2)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_3">
+                <span class="pair-number">Pair 3</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(3)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_4">
+                <span class="pair-number">Pair 4</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(4)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_5">
+                <span class="pair-number">Pair 5</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(5)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_6">
+                <span class="pair-number">Pair 6</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(6)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_7">
+                <span class="pair-number">Pair 7</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(7)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_8">
+                <span class="pair-number">Pair 8</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(8)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_9">
+                <span class="pair-number">Pair 9</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(9)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_10">
+                <span class="pair-number">Pair 10</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(10)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_11">
+                <span class="pair-number">Pair 11</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(11)">🗑</button>
+            </div><div class="word-pair-row" id="pairRow_12">
+                <span class="pair-number">Pair 12</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="">
+                <button class="btn btn-delete" onclick="deletePairRow(12)">🗑</button>
+            </div></div>
+            <button class="btn btn-add" onclick="addNewPairRow()">➕ Add New Pair</button>
+            <button class="btn btn-generate" onclick="validateAndOpenSetup()">Generate Full-Screen Game 🚀</button>
+        </div>
+
+        <div id="overlayBg" class="overlay-bg" style="display: none;"></div>
+
+        <div id="setupPopup" class="setup-section" style="display: none;">
+            <button class="close-setup-btn" onclick="closeGameSetup()">✕</button>
+            <h2 style="margin-top: 10px;">🎮 Select Game Mode</h2>
+            <div class="mode-options">
+                <button class="mode-btn active" id="btnSolo" onclick="setMode('solo')">Solo Player</button>
+                <button class="mode-btn" id="btnTeam" onclick="setMode('team')">Team Versus</button>
+            </div>
+            <div id="teamInputs" class="team-inputs">
+                <label>Team 1 Name:</label>
+                <input type="text" id="t1Name" value="Team A">
+                <label>Team 2 Name:</label>
+                <input type="text" id="t2Name" value="Team B">
+                <label>Who plays first?</label>
+                <div class="turn-select">
+                    <button class="turn-btn active" id="btnT1Turn" onclick="setFirstTurn(1)">Team 1</button>
+                    <button class="turn-btn" id="btnT2Turn" onclick="setFirstTurn(2)">Team 2</button>
+                </div>
+            </div>
+            <button class="btn btn-generate" style="margin-top:25px;" onclick="startGameNow()">Start Game 🏁</button>
+        </div>
+
+        <div id="gamePage" class="game-section" style="display: block;">
+            <div class="game-arena">
+                <div class="scoreboard" id="scoreboard">
+                    <div class="team-score-card active-turn" id="scoreCard1">
+                        <div id="displayName1">Solo Player</div>
+                        <div class="score-num" id="scoreNum1">0</div>
+                    </div>
+                    <div class="team-score-card" id="scoreCard2" style="display:none;">
+                        <div id="displayName2">Team B</div>
+                        <div class="score-num" id="scoreNum2">0</div>
+                    </div>
+                </div>
+
+                <div class="match-container" id="gameBoard"><div class="card-container" data-id="6" style="--move-x: -59.469426735366575px; --move-y: -32.870733838603584px;"><div class="card-inner"><div class="card-face card-front">1</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=artist&amp;imgurl=https%3A%2F%2Fpyxis.nymag.com%2Fv1%2Fimgs%2F2cb%2F2e1%2F47a72da70b3f7a301273b06cac9ea615c8-06-bob-ross-painting.rsquare.w400.jpg&amp;imgrefurl=https%3A%2F%2Fwww.thecut.com%2F2016%2F01%2Fartists-way-self-help-book.html&amp;docid=CzoN-b-GYubaoM&amp;tbnid=WSMBZ7gjAfXgkM&amp;vet=12ahUKEwjur-vqk9KUAxVEklYBHaAoOvAQnPAOegQIIRAB..i&amp;w=400&amp;h=400&amp;hcb=2&amp;ved=2ahUKEwjur-vqk9KUAxVEklYBHaAoOvAQnPAOegQIIRAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="1" style="--move-x: -19.72369606999726px; --move-y: -55.411757615781035px;"><div class="card-inner"><div class="card-face card-front">2</div><div class="card-face card-back">Run<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="6" style="--move-x: -19.551635319189828px; --move-y: -29.993650912043954px;"><div class="card-inner"><div class="card-face card-front">3</div><div class="card-face card-back">Draw<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="4" style="--move-x: 77.23310258508246px; --move-y: 26.612892218791416px;"><div class="card-inner"><div class="card-face card-front">4</div><div class="card-face card-back">Sing<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="5" style="--move-x: -51.04380483755867px; --move-y: -10.91141343058144px;"><div class="card-inner"><div class="card-face card-front">5</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=swim&amp;imgurl=https%3A%2F%2Fswimstars.co%2Fwp-content%2Fuploads%2F2022%2F08%2Fnatation-adulte-swim-stars.jpeg&amp;imgrefurl=https%3A%2F%2Fswimstars.co%2Fen%2Fadult-swimming-lessons%2F&amp;docid=h-tS43QfJvaG4M&amp;tbnid=FZX_5KybjevKAM&amp;vet=12ahUKEwjQst3xk9KUAxXx3jQHHeiwFLgQnPAOegQIGhAB..i&amp;w=1600&amp;h=1067&amp;hcb=2&amp;ved=2ahUKEwjQst3xk9KUAxXx3jQHHeiwFLgQnPAOegQIGhAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="7" style="--move-x: -37.585909257168524px; --move-y: 51.10745328785387px;"><div class="card-inner"><div class="card-face card-front">6</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=read&amp;imgurl=https%3A%2F%2Ftwosides.info%2Fwp-content%2Fuploads%2F2024%2F02%2FAre-We-Losing-Our-Ability-To-Read-Deeply-scaled-730x411.jpg&amp;imgrefurl=https%3A%2F%2Ftwosides.info%2FUK%2Fare-we-losing-our-ability-to-read-deeply%2F&amp;docid=43Wj-JXEcM-khM&amp;tbnid=pBNrHOZxeD9QQM&amp;vet=12ahUKEwiw14Dlk9KUAxWlslYBHeRCEigQnPAOegQIFxAB..i&amp;w=730&amp;h=411&amp;hcb=2&amp;ved=2ahUKEwiw14Dlk9KUAxWlslYBHeRCEigQnPAOegQIFxAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="11" style="--move-x: -1.4352070292132026px; --move-y: -5.27096071122331px;"><div class="card-inner"><div class="card-face card-front">7</div><div class="card-face card-back">Cook<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="5" style="--move-x: -1.4772505620762217px; --move-y: 24.133246095364456px;"><div class="card-inner"><div class="card-face card-front">8</div><div class="card-face card-back">Swim<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="0" style="--move-x: -2.924570774446437px; --move-y: -2.8244832592882503px;"><div class="card-inner"><div class="card-face card-front">9</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=walk&amp;imgurl=https%3A%2F%2Fimg.freepik.com%2Ffree-photo%2Ffull-length-senior-sportsman-taking-walk-morning-listening-music-earphones-nature-copy-space_637285-3869.jpg%3Fsemt%3Dais_hybrid%26w%3D740%26q%3D80&amp;imgrefurl=https%3A%2F%2Fwww.freepik.com%2Fphotos%2Fwalk&amp;docid=iWyQLN0tc662wM&amp;tbnid=Dl2eQn6JhHpr7M&amp;vet=12ahUKEwja9PeXlNKUAxU-mFYBHXbGKIAQnPAOegQIcRAB..i&amp;w=740&amp;h=493&amp;hcb=2&amp;ved=2ahUKEwja9PeXlNKUAxU-mFYBHXbGKIAQnPAOegQIcRAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="10" style="--move-x: -4.721366003280451px; --move-y: -24.24757533695881px;"><div class="card-inner"><div class="card-face card-front">10</div><div class="card-face card-back">Ride<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="3" style="--move-x: -47.776582259201064px; --move-y: -22.48178286387047px;"><div class="card-inner"><div class="card-face card-front">11</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=dance&amp;imgurl=https%3A%2F%2Fd26oc3sg82pgk3.cloudfront.net%2Ffiles%2Fmedia%2Fedit%2Fimage%2F56545%2Farticle_full%25402x.jpg&amp;imgrefurl=https%3A%2F%2Fwww.backstage.com%2Fmagazine%2Farticle%2Fhow-to-learn-to-dance-77299%2F&amp;docid=txNnwSlk4yobnM&amp;tbnid=4K0yUYlYRRsfvM&amp;vet=12ahUKEwjtvreHlNKUAxV6qFYBHbYFDeEQnPAOegQIHRAB..i&amp;w=1580&amp;h=900&amp;hcb=2&amp;ved=2ahUKEwjtvreHlNKUAxV6qFYBHbYFDeEQnPAOegQIHRAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="11" style="--move-x: 22.2699851512173px; --move-y: -18.530887949665953px;"><div class="card-inner"><div class="card-face card-front">12</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=cook&amp;imgurl=https%3A%2F%2Fimages.airtasker.com%2Fv7%2Fhttps%3A%2F%2Fairtasker-seo-assets-prod.s3.amazonaws.com%2Fen_AU%2F1754472279181-male-cook.jpg%3Fgravity%3Dsmart%26w%3D1200%26h%3D1200&amp;imgrefurl=https%3A%2F%2Fwww.airtasker.com%2Fau%2Fcomparisons%2Fchef-vs-cook%2F&amp;docid=lLkrPcW78QuKNM&amp;tbnid=UHHsrvYR7FunlM&amp;vet=12ahUKEwi3s8TCk9KUAxUxgFYBHdRJDnkQnPAOegQIIxAB..i&amp;w=1200&amp;h=1200&amp;hcb=2&amp;ved=2ahUKEwi3s8TCk9KUAxUxgFYBHdRJDnkQnPAOegQIIxAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="8" style="--move-x: -68.91690522144401px; --move-y: -36.34280958005972px;"><div class="card-inner"><div class="card-face card-front">13</div><div class="card-face card-back">Fly<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="3" style="--move-x: 21.06688506652823px; --move-y: -36.06270406190777px;"><div class="card-inner"><div class="card-face card-front">14</div><div class="card-face card-back">Dance<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="7" style="--move-x: 28.917505515549124px; --move-y: -51.30053713299361px;"><div class="card-inner"><div class="card-face card-front">15</div><div class="card-face card-back">Read<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="9" style="--move-x: -76.88864930072418px; --move-y: 42.45346202877424px;"><div class="card-inner"><div class="card-face card-front">16</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=climb&amp;imgurl=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc5%2FHebrides_climbing_-_Sugar_Cane_Country_-_01.jpg&amp;imgrefurl=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FFree_climbing&amp;docid=C9mtMynyeMz21M&amp;tbnid=5AivouQW3Wpz1M&amp;vet=12ahUKEwjh88nMk9KUAxUV3jQHHfV4DIEQnPAOegQIGBAB..i&amp;w=1771&amp;h=2515&amp;hcb=2&amp;ved=2ahUKEwjh88nMk9KUAxUV3jQHHfV4DIEQnPAOegQIGBAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="9" style="--move-x: -5.495403007545548px; --move-y: -3.4789884870957266px;"><div class="card-inner"><div class="card-face card-front">17</div><div class="card-face card-back">Climb<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="0" style="--move-x: -48.951152658214085px; --move-y: -1.3282466713273777px;"><div class="card-inner"><div class="card-face card-front">18</div><div class="card-face card-back">Walk<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="2" style="--move-x: 18.52858857484067px; --move-y: 54.68458632914303px;"><div class="card-inner"><div class="card-face card-front">19</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=jump&amp;imgurl=https%3A%2F%2Fstatic.wixstatic.com%2Fmedia%2F30a96e_efb69ede3f5743a393a527e0b5fabf19~mv2.jpg%2Fv1%2Ffill%2Fw_640%2Ch_448%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto%2F30a96e_efb69ede3f5743a393a527e0b5fabf19~mv2.jpg&amp;imgrefurl=https%3A%2F%2Fwww.123jump.org%2F&amp;docid=pSFcG3SVWgbWqM&amp;tbnid=WPWpYLHcTjsPcM&amp;vet=12ahUKEwjGg52NlNKUAxW5s1YBHY9tMHMQnPAOegQIHBAB..i&amp;w=640&amp;h=448&amp;hcb=2&amp;ved=2ahUKEwjGg52NlNKUAxW5s1YBHY9tMHMQnPAOegQIHBAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="8" style="--move-x: -35.666666984507884px; --move-y: 31.876700747554082px;"><div class="card-inner"><div class="card-face card-front">20</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=superman%20fly&amp;imgurl=https%3A%2F%2Fimages-wixmp-ed30a86b8c4ca887773594c2.wixmp.com%2Ff%2Ff7989611-dce3-4183-b8de-778c636a7e76%2Fd5wyfv5-269f668b-b073-4d0a-9bcd-1c44472a4a9e.jpg%2Fv1%2Ffill%2Fw_1024%2Ch_640%2Cq_75%2Cstrp%2Fsuperman_flight_wallpaper_by_samuraiminister_d5wyfv5-fullview.jpg%3Ftoken%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjQwIiwicGF0aCI6Ii9mL2Y3OTg5NjExLWRjZTMtNDE4My1iOGRlLTc3OGM2MzZhN2U3Ni9kNXd5ZnY1LTI2OWY2NjhiLWIwNzMtNGQwYS05YmNkLTFjNDQ0NzJhNGE5ZS5qcGciLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.Dy6jRfrnVwB3d8ZGesiiyol-eN1_bU61qfziRmm6zMM&amp;imgrefurl=https%3A%2F%2Fwww.deviantart.com%2Fsamuraiminister%2Fart%2FSuperman-flight-wallpaper-357685457&amp;docid=osG_r2FoIUxcSM&amp;tbnid=A6YVU3ZcXIU9LM&amp;vet=12ahUKEwjh47nbk9KUAxXHRmwGHT3mAl44ChCc8A56BAhFEAE..i&amp;w=1024&amp;h=640&amp;hcb=2&amp;ved=2ahUKEwjh47nbk9KUAxXHRmwGHT3mAl44ChCc8A56BAhFEAE"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="2" style="--move-x: 32.12223601963035px; --move-y: -27.389839915199673px;"><div class="card-inner"><div class="card-face card-front">21</div><div class="card-face card-back">Jump<div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="10" style="--move-x: 17.033196011401103px; --move-y: -41.70655921092968px;"><div class="card-inner"><div class="card-face card-front">22</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=Ride&amp;imgurl=https%3A%2F%2Fridemobility.eu%2Fwp-content%2Fuploads%2F2024%2F08%2Ftinatirone_ridemobility_IMG_4398-2.jpg&amp;imgrefurl=https%3A%2F%2Fridemobility.eu%2F&amp;docid=bBWV5kWvba3Q8M&amp;tbnid=p-5sTwREalikvM&amp;vet=12ahUKEwi_l5mjkdKUAxUPnq8BHXjeEeUQnPAOegQIJxAB..i&amp;w=600&amp;h=840&amp;hcb=2&amp;ved=2ahUKEwi_l5mjkdKUAxUPnq8BHXjeEeUQnPAOegQIJxAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="4" style="--move-x: -22.193943136446507px; --move-y: -41.542497236865024px;"><div class="card-inner"><div class="card-face card-front">23</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=sing&amp;imgurl=https%3A%2F%2Fwww.illumination.com%2Fwp-content%2Fuploads%2F2019%2F10%2FSing_Buster_2.png&amp;imgrefurl=https%3A%2F%2Fwww.illumination.com%2Fmovie%2Fsing%2F&amp;docid=M6UHUmiZA6NezM&amp;tbnid=2piKKB0usLX8KM&amp;vet=12ahUKEwjMuoz9k9KUAxXlslYBHaFbPMMQnPAOegQIIxAB..i&amp;w=1188&amp;h=1417&amp;hcb=2&amp;ved=2ahUKEwjMuoz9k9KUAxXlslYBHaFbPMMQnPAOegQIIxAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div><div class="card-container" data-id="1" style="--move-x: -26.022233700605355px; --move-y: 29.419864103632648px;"><div class="card-inner"><div class="card-face card-front">24</div><div class="card-face card-back"><img src="https://www.google.com/imgres?q=run&amp;imgurl=https%3A%2F%2Fas2.ftcdn.net%2Fjpg%2F03%2F24%2F70%2F73%2F1000_F_324707336_85Inqfuj5n9CGuqFNJAQ6qQEhlXxV1fT.jpg&amp;imgrefurl=https%3A%2F%2Fstock.adobe.com%2Fth%2Fimages%2Fchild-running-in-stadium-kids-run-healthy-sport%2F324707336&amp;docid=ndmW490njHpbZM&amp;tbnid=-gQbMpzz4IucTM&amp;vet=12ahUKEwju8uiSlNKUAxXIlFYBHYORBwkQnPAOegQIGxAB..i&amp;w=1000&amp;h=667&amp;hcb=2&amp;ved=2ahUKEwju8uiSlNKUAxXIlFYBHYORBwkQnPAOegQIGxAB"><div class="feedback-overlay feedback-correct">✓</div><div class="feedback-overlay feedback-wrong">✗</div></div></div></div></div>
+
+                <div class="game-controls">
+                    <button class="btn btn-back" onclick="showCreator()">⬅ Edit Game</button>
+                    <button class="btn btn-save-file" onclick="exportCurrentGame()">📥 Save Game File</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="endGamePopup" class="end-game-popup">
+            <h2 id="winTitle">🏆 Congratulations!</h2>
+            <p id="winDetails">Game Completed successfully!</p>
+            <button class="btn btn-restart" onclick="restartGameWithShuffle()">🔄 Play Again (Shuffle Cards)</button>
+        </div>
+
+    </div>
+
+    <script id="preloadedData">const preloadedPairs = [{"a":"Walk","b":"https://www.google.com/imgres?q=walk&imgurl=https%3A%2F%2Fimg.freepik.com%2Ffree-photo%2Ffull-length-senior-sportsman-taking-walk-morning-listening-music-earphones-nature-copy-space_637285-3869.jpg%3Fsemt%3Dais_hybrid%26w%3D740%26q%3D80&imgrefurl=https%3A%2F%2Fwww.freepik.com%2Fphotos%2Fwalk&docid=iWyQLN0tc662wM&tbnid=Dl2eQn6JhHpr7M&vet=12ahUKEwja9PeXlNKUAxU-mFYBHXbGKIAQnPAOegQIcRAB..i&w=740&h=493&hcb=2&ved=2ahUKEwja9PeXlNKUAxU-mFYBHXbGKIAQnPAOegQIcRAB"},{"a":"Run","b":"https://www.google.com/imgres?q=run&imgurl=https%3A%2F%2Fas2.ftcdn.net%2Fjpg%2F03%2F24%2F70%2F73%2F1000_F_324707336_85Inqfuj5n9CGuqFNJAQ6qQEhlXxV1fT.jpg&imgrefurl=https%3A%2F%2Fstock.adobe.com%2Fth%2Fimages%2Fchild-running-in-stadium-kids-run-healthy-sport%2F324707336&docid=ndmW490njHpbZM&tbnid=-gQbMpzz4IucTM&vet=12ahUKEwju8uiSlNKUAxXIlFYBHYORBwkQnPAOegQIGxAB..i&w=1000&h=667&hcb=2&ved=2ahUKEwju8uiSlNKUAxXIlFYBHYORBwkQnPAOegQIGxAB"},{"a":"Jump","b":"https://www.google.com/imgres?q=jump&imgurl=https%3A%2F%2Fstatic.wixstatic.com%2Fmedia%2F30a96e_efb69ede3f5743a393a527e0b5fabf19~mv2.jpg%2Fv1%2Ffill%2Fw_640%2Ch_448%2Cal_c%2Cq_80%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto%2F30a96e_efb69ede3f5743a393a527e0b5fabf19~mv2.jpg&imgrefurl=https%3A%2F%2Fwww.123jump.org%2F&docid=pSFcG3SVWgbWqM&tbnid=WPWpYLHcTjsPcM&vet=12ahUKEwjGg52NlNKUAxW5s1YBHY9tMHMQnPAOegQIHBAB..i&w=640&h=448&hcb=2&ved=2ahUKEwjGg52NlNKUAxW5s1YBHY9tMHMQnPAOegQIHBAB"},{"a":"Dance","b":"https://www.google.com/imgres?q=dance&imgurl=https%3A%2F%2Fd26oc3sg82pgk3.cloudfront.net%2Ffiles%2Fmedia%2Fedit%2Fimage%2F56545%2Farticle_full%25402x.jpg&imgrefurl=https%3A%2F%2Fwww.backstage.com%2Fmagazine%2Farticle%2Fhow-to-learn-to-dance-77299%2F&docid=txNnwSlk4yobnM&tbnid=4K0yUYlYRRsfvM&vet=12ahUKEwjtvreHlNKUAxV6qFYBHbYFDeEQnPAOegQIHRAB..i&w=1580&h=900&hcb=2&ved=2ahUKEwjtvreHlNKUAxV6qFYBHbYFDeEQnPAOegQIHRAB"},{"a":"Sing","b":"https://www.google.com/imgres?q=sing&imgurl=https%3A%2F%2Fwww.illumination.com%2Fwp-content%2Fuploads%2F2019%2F10%2FSing_Buster_2.png&imgrefurl=https%3A%2F%2Fwww.illumination.com%2Fmovie%2Fsing%2F&docid=M6UHUmiZA6NezM&tbnid=2piKKB0usLX8KM&vet=12ahUKEwjMuoz9k9KUAxXlslYBHaFbPMMQnPAOegQIIxAB..i&w=1188&h=1417&hcb=2&ved=2ahUKEwjMuoz9k9KUAxXlslYBHaFbPMMQnPAOegQIIxAB"},{"a":"Swim","b":"https://www.google.com/imgres?q=swim&imgurl=https%3A%2F%2Fswimstars.co%2Fwp-content%2Fuploads%2F2022%2F08%2Fnatation-adulte-swim-stars.jpeg&imgrefurl=https%3A%2F%2Fswimstars.co%2Fen%2Fadult-swimming-lessons%2F&docid=h-tS43QfJvaG4M&tbnid=FZX_5KybjevKAM&vet=12ahUKEwjQst3xk9KUAxXx3jQHHeiwFLgQnPAOegQIGhAB..i&w=1600&h=1067&hcb=2&ved=2ahUKEwjQst3xk9KUAxXx3jQHHeiwFLgQnPAOegQIGhAB"},{"a":"Draw","b":"https://www.google.com/imgres?q=artist&imgurl=https%3A%2F%2Fpyxis.nymag.com%2Fv1%2Fimgs%2F2cb%2F2e1%2F47a72da70b3f7a301273b06cac9ea615c8-06-bob-ross-painting.rsquare.w400.jpg&imgrefurl=https%3A%2F%2Fwww.thecut.com%2F2016%2F01%2Fartists-way-self-help-book.html&docid=CzoN-b-GYubaoM&tbnid=WSMBZ7gjAfXgkM&vet=12ahUKEwjur-vqk9KUAxVEklYBHaAoOvAQnPAOegQIIRAB..i&w=400&h=400&hcb=2&ved=2ahUKEwjur-vqk9KUAxVEklYBHaAoOvAQnPAOegQIIRAB"},{"a":"Read","b":"https://www.google.com/imgres?q=read&imgurl=https%3A%2F%2Ftwosides.info%2Fwp-content%2Fuploads%2F2024%2F02%2FAre-We-Losing-Our-Ability-To-Read-Deeply-scaled-730x411.jpg&imgrefurl=https%3A%2F%2Ftwosides.info%2FUK%2Fare-we-losing-our-ability-to-read-deeply%2F&docid=43Wj-JXEcM-khM&tbnid=pBNrHOZxeD9QQM&vet=12ahUKEwiw14Dlk9KUAxWlslYBHeRCEigQnPAOegQIFxAB..i&w=730&h=411&hcb=2&ved=2ahUKEwiw14Dlk9KUAxWlslYBHeRCEigQnPAOegQIFxAB"},{"a":"Fly","b":"https://www.google.com/imgres?q=superman%20fly&imgurl=https%3A%2F%2Fimages-wixmp-ed30a86b8c4ca887773594c2.wixmp.com%2Ff%2Ff7989611-dce3-4183-b8de-778c636a7e76%2Fd5wyfv5-269f668b-b073-4d0a-9bcd-1c44472a4a9e.jpg%2Fv1%2Ffill%2Fw_1024%2Ch_640%2Cq_75%2Cstrp%2Fsuperman_flight_wallpaper_by_samuraiminister_d5wyfv5-fullview.jpg%3Ftoken%3DeyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9NjQwIiwicGF0aCI6Ii9mL2Y3OTg5NjExLWRjZTMtNDE4My1iOGRlLTc3OGM2MzZhN2U3Ni9kNXd5ZnY1LTI2OWY2NjhiLWIwNzMtNGQwYS05YmNkLTFjNDQ0NzJhNGE5ZS5qcGciLCJ3aWR0aCI6Ijw9MTAyNCJ9XV0sImF1ZCI6WyJ1cm46c2VydmljZTppbWFnZS5vcGVyYXRpb25zIl19.Dy6jRfrnVwB3d8ZGesiiyol-eN1_bU61qfziRmm6zMM&imgrefurl=https%3A%2F%2Fwww.deviantart.com%2Fsamuraiminister%2Fart%2FSuperman-flight-wallpaper-357685457&docid=osG_r2FoIUxcSM&tbnid=A6YVU3ZcXIU9LM&vet=12ahUKEwjh47nbk9KUAxXHRmwGHT3mAl44ChCc8A56BAhFEAE..i&w=1024&h=640&hcb=2&ved=2ahUKEwjh47nbk9KUAxXHRmwGHT3mAl44ChCc8A56BAhFEAE"},{"a":"Climb","b":"https://www.google.com/imgres?q=climb&imgurl=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc5%2FHebrides_climbing_-_Sugar_Cane_Country_-_01.jpg&imgrefurl=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FFree_climbing&docid=C9mtMynyeMz21M&tbnid=5AivouQW3Wpz1M&vet=12ahUKEwjh88nMk9KUAxUV3jQHHfV4DIEQnPAOegQIGBAB..i&w=1771&h=2515&hcb=2&ved=2ahUKEwjh88nMk9KUAxUV3jQHHfV4DIEQnPAOegQIGBAB"},{"a":"Ride","b":"https://www.google.com/imgres?q=Ride&imgurl=https%3A%2F%2Fridemobility.eu%2Fwp-content%2Fuploads%2F2024%2F08%2Ftinatirone_ridemobility_IMG_4398-2.jpg&imgrefurl=https%3A%2F%2Fridemobility.eu%2F&docid=bBWV5kWvba3Q8M&tbnid=p-5sTwREalikvM&vet=12ahUKEwi_l5mjkdKUAxUPnq8BHXjeEeUQnPAOegQIJxAB..i&w=600&h=840&hcb=2&ved=2ahUKEwi_l5mjkdKUAxUPnq8BHXjeEeUQnPAOegQIJxAB"},{"a":"Cook","b":"https://www.google.com/imgres?q=cook&imgurl=https%3A%2F%2Fimages.airtasker.com%2Fv7%2Fhttps%3A%2F%2Fairtasker-seo-assets-prod.s3.amazonaws.com%2Fen_AU%2F1754472279181-male-cook.jpg%3Fgravity%3Dsmart%26w%3D1200%26h%3D1200&imgrefurl=https%3A%2F%2Fwww.airtasker.com%2Fau%2Fcomparisons%2Fchef-vs-cook%2F&docid=lLkrPcW78QuKNM&tbnid=UHHsrvYR7FunlM&vet=12ahUKEwi3s8TCk9KUAxUxgFYBHdRJDnkQnPAOegQIIxAB..i&w=1200&h=1200&hcb=2&ved=2ahUKEwi3s8TCk9KUAxUxgFYBHdRJDnkQnPAOegQIIxAB"}];</script>
+
+    <script>
+        let pairCount = 0;
+        let gameMode = 'solo';
+        let activeTurn = 1;
+        let scores = { 1: 0, 2: 0 };
+        let activePairsData = [];
+        let flippedCards = [];
+        let totalMatches = 0;
+        let matchesFound = 0;
+
+        const AudioFX = {
+            ctx: null,
+            init() { if (!this.ctx) { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } },
+            playFlip() {
+                try {
+                    this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(500, this.ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(700, this.ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.08, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+                    osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+                } catch (e) { console.log(e); }
+            },
+            playCorrect() {
+                try {
+                    this.init(); const t = this.ctx.currentTime;
+                    const tone = (freq, start, duration) => {
+                        const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                        osc.type = 'square'; osc.frequency.setValueAtTime(freq, start);
+                        gain.gain.setValueAtTime(0.08, start); gain.gain.linearRampToValueAtTime(0.001, start + duration);
+                        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(start); osc.stop(start + duration);
+                    };
+                    tone(523.25, t, 0.1); tone(523.25, t + 0.12, 0.1); tone(659.25, t + 0.24, 0.4);
+                } catch (e) { console.log(e); }
+            },
+            playWrong() {
+                try {
+                    this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, this.ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.45);
+                    gain.gain.setValueAtTime(0.12, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.45);
+                    osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.45);
+                } catch (e) { console.log(e); }
+            },
+            playShuffle() {
+                try {
+                    this.init(); let t = this.ctx.currentTime;
+                    for (let i = 0; i < 12; i++) {
+                        const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain(); osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(300 + Math.random() * 200, t + (i * 0.05));
+                        gain.gain.setValueAtTime(0.04, t + (i * 0.05)); gain.gain.linearRampToValueAtTime(0.001, t + (i * 0.05) + 0.04);
+                        osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t + (i * 0.05)); osc.stop(t + (i * 0.05) + 0.04);
+                    }
+                } catch (e) { console.log(e); }
+            }
+        };
+
+        window.onload = function () {
+            if (typeof preloadedPairs !== 'undefined' && preloadedPairs.length > 0) {
+                preloadedPairs.forEach(pair => { addNewPairRow(pair.a, pair.b); });
+            }
+            const rows = document.querySelectorAll(".word-pair-row");
+            if (rows.length === 0) {
+                for (let i = 0; i < 3; i++) { addNewPairRow(); }
+            }
+        };
+
+        function addNewPairRow(valA = '', valB = '') {
+            pairCount++;
+            const container = document.getElementById("wordInputsContainer");
+            const row = document.createElement("div");
+            row.classList.add("word-pair-row");
+            row.id = `pairRow_${pairCount}`;
+            row.innerHTML = `
+                <span class="pair-number">Pair ${pairCount}</span>
+                <input type="text" class="input-word-a" placeholder="Word" value="${valA}">
+                <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="${valB}">
+                <button class="btn btn-delete" onclick="deletePairRow(${pairCount})">🗑</button>
+            `;
+            container.appendChild(row);
+        }
+
+        function deletePairRow(id) {
+            const row = document.getElementById(`pairRow_${id}`);
+            if (row) row.remove();
+        }
+
+        function validateAndOpenSetup() {
+            const rows = document.querySelectorAll(".word-pair-row");
+            activePairsData = [];
+            let rowId = 0;
+
+            rows.forEach((row) => {
+                const inputA = row.querySelector(".input-word-a").value.trim();
+                const inputB = row.querySelector(".input-word-b").value.trim();
+                if (inputA !== "" && inputB !== "") {
+                    activePairsData.push({ id: rowId, a: inputA, b: inputB });
+                    rowId++;
+                }
+            });
+
+            if (activePairsData.length === 0) {
+                alert("Please enter at least one complete word pair before generating!");
+                return;
+            }
+
+            document.getElementById("overlayBg").style.display = "block";
+            document.getElementById("setupPopup").style.display = "block";
+        }
+
+        function closeGameSetup() {
+            document.getElementById("overlayBg").style.display = "none";
+            document.getElementById("setupPopup").style.display = "none";
+        }
+
+        function setMode(mode) {
+            gameMode = mode;
+            document.getElementById("btnSolo").classList.toggle("active", mode === 'solo');
+            document.getElementById("btnTeam").classList.toggle("active", mode === 'team');
+            document.getElementById("teamInputs").style.display = mode === 'team' ? 'block' : 'none';
+        }
+
+        function setFirstTurn(teamNum) {
+            activeTurn = teamNum;
+            document.getElementById("btnT1Turn").classList.toggle("active", teamNum === 1);
+            document.getElementById("btnT2Turn").classList.toggle("active", teamNum === 2);
+        }
+
+        function showCreator() {
+            document.getElementById("creatorPage").style.display = "block";
+            document.getElementById("gamePage").style.display = "none";
+            document.getElementById("endGamePopup").style.display = "none";
+            document.getElementById("overlayBg").style.display = "none";
+        }
+
+        function isImageUrl(text) { return text.startsWith("http://") || text.startsWith("https://") || text.includes("data:image"); }
+
+        function startGameNow() {
+            document.getElementById("setupPopup").style.display = "none";
+            document.getElementById("overlayBg").style.display = "none";
+            document.getElementById("creatorPage").style.display = "none";
+            document.getElementById("gamePage").style.display = "block";
+
+            scores = { 1: 0, 2: 0 };
+            document.getElementById("scoreNum1").innerText = "0";
+            document.getElementById("scoreNum2").innerText = "0";
+
+            if (gameMode === 'solo') {
+                document.getElementById("displayName1").innerText = "Solo Player";
+                document.getElementById("scoreCard2").style.display = "none";
+                document.getElementById("scoreCard1").classList.add("active-turn");
+                activeTurn = 1;
+            } else {
+                document.getElementById("displayName1").innerText = document.getElementById("t1Name").value;
+                document.getElementById("displayName2").innerText = document.getElementById("t2Name").value;
+                document.getElementById("scoreCard2").style.display = "block";
+                updateTurnUI();
+            }
+
+            totalMatches = activePairsData.length;
+            matchesFound = 0;
+
+            buildGameBoard();
+            triggerShellShuffleAnimation();
+        }
+
+        function updateTurnUI() {
+            if (gameMode === 'solo') return;
+            document.getElementById("scoreCard1").classList.toggle("active-turn", activeTurn === 1);
+            document.getElementById("scoreCard2").classList.toggle("active-turn", activeTurn === 2);
+        }
+
+        function buildGameBoard() {
+            const gameBoard = document.getElementById("gameBoard");
+            gameBoard.innerHTML = "";
+            flippedCards = [];
+
+            let cards = [];
+            activePairsData.forEach(pair => {
+                cards.push({ id: pair.id, text: pair.a });
+                cards.push({ id: pair.id, text: pair.b });
+            });
+
+            cards.sort(() => Math.random() - 0.5);
+
+            cards.forEach((data, index) => {
+                const container = document.createElement("div");
+                container.classList.add("card-container");
+                container.dataset.id = data.id;
+
+                const inner = document.createElement("div");
+                inner.classList.add("card-inner");
+
+                const front = document.createElement("div");
+                front.classList.add("card-face", "card-front"); front.innerText = index + 1;
+
+                const back = document.createElement("div");
+                back.classList.add("card-face", "card-back");
+
+                if (isImageUrl(data.text)) {
+                    const img = document.createElement("img"); img.src = data.text; back.appendChild(img);
+                } else {
+                    back.innerText = data.text;
+                }
+
+                const correctOverlay = document.createElement("div");
+                correctOverlay.classList.add("feedback-overlay", "feedback-correct");
+                correctOverlay.innerText = "✓";
+
+                const wrongOverlay = document.createElement("div");
+                wrongOverlay.classList.add("feedback-overlay", "feedback-wrong");
+                wrongOverlay.innerText = "✗";
+
+                back.appendChild(correctOverlay);
+                back.appendChild(wrongOverlay);
+
+                inner.appendChild(front); inner.appendChild(back);
+                container.appendChild(inner);
+
+                container.onclick = function () {
+                    if (container.classList.contains("is-flipped") || container.classList.contains("fall-down") || flippedCards.length === 2) return;
+
+                    AudioFX.playFlip();
+                    container.classList.add("is-flipped");
+                    flippedCards.push(container);
+
+                    if (flippedCards.length === 2) {
+                        setTimeout(checkMatchLogic, 400);
+                    }
+                };
+                gameBoard.appendChild(container);
+            });
+        }
+
+        function triggerShellShuffleAnimation() {
+            AudioFX.playShuffle();
+            const containers = document.querySelectorAll(".card-container");
+            containers.forEach((card) => {
+                const randomX = (Math.random() * 160 - 80) + 'px';
+                const randomY = (Math.random() * 120 - 60) + 'px';
+                card.style.setProperty('--move-x', randomX);
+                card.style.setProperty('--move-y', randomY);
+                card.classList.add("shuffle-left-right");
+                setTimeout(() => { card.classList.remove("shuffle-left-right"); }, 600);
+            });
+        }
+
+        function checkMatchLogic() {
+            const [card1, card2] = flippedCards;
+            if (!card1 || !card2) return;
+
+            if (card1.dataset.id === card2.dataset.id) {
+                card1.querySelector(".feedback-correct").style.opacity = "1";
+                card2.querySelector(".feedback-correct").style.opacity = "1";
+
+                AudioFX.playCorrect();
+                scores[activeTurn]++;
+                document.getElementById(`scoreNum${activeTurn}`).innerText = scores[activeTurn];
+                matchesFound++;
+
+                setTimeout(() => {
+                    card1.classList.add("fall-down");
+                    card2.classList.add("fall-down");
+                    flippedCards = [];
+                    if (matchesFound === totalMatches) { showEndGameResult(); }
+                }, 600);
+
+            } else {
+                card1.querySelector(".feedback-wrong").style.opacity = "1";
+                card2.querySelector(".feedback-wrong").style.opacity = "1";
+
+                AudioFX.playWrong();
+
+                setTimeout(() => {
+                    card1.querySelector(".feedback-wrong").style.opacity = "0";
+                    card2.querySelector(".feedback-wrong").style.opacity = "0";
+                    card1.classList.remove("is-flipped");
+                    card2.classList.remove("is-flipped");
+                    flippedCards = [];
+
+                    if (gameMode === 'team') {
+                        activeTurn = activeTurn === 1 ? 2 : 1;
+                        updateTurnUI();
+                    }
+                }, 1000);
+            }
+        }
+
+        function showEndGameResult() {
+            document.getElementById("overlayBg").style.display = "block";
+            const popup = document.getElementById("endGamePopup");
+            popup.style.display = "block";
+
+            if (gameMode === 'solo') {
+                document.getElementById("winTitle").innerText = "🏆 Game Completed!";
+                document.getElementById("winDetails").innerText = `Great Job!`;
+            } else {
+                const t1Name = document.getElementById("displayName1").innerText;
+                const t2Name = document.getElementById("displayName2").innerText;
+                if (scores[1] > scores[2]) { document.getElementById("winTitle").innerText = `🏆 ${t1Name} Wins!`; }
+                else if (scores[2] > scores[1]) { document.getElementById("winTitle").innerText = `🏆 ${t2Name} Wins!`; }
+                else { document.getElementById("winTitle").innerText = "🤝 It's a Tie!"; }
+                document.getElementById("winDetails").innerText = `${t1Name}: ${scores[1]} Pts | ${t2Name}: ${scores[2]} Pts`;
+            }
+        }
+
+        function restartGameWithShuffle() {
+            document.getElementById("endGamePopup").style.display = "none";
+            document.getElementById("overlayBg").style.display = "none";
+            scores = { 1: 0, 2: 0 };
+            document.getElementById("scoreNum1").innerText = "0";
+            document.getElementById("scoreNum2").innerText = "0";
+            matchesFound = 0;
+
+            if (gameMode === 'team') {
+                activeTurn = document.getElementById("btnT1Turn").classList.contains("active") ? 1 : 2;
+                updateTurnUI();
+            }
+
+            buildGameBoard();
+            triggerShellShuffleAnimation();
+        }
+
+        function exportCurrentGame() {
+            const fileName = prompt("Enter a name for this game file:", "my-english-game");
+            if (!fileName) return;
+            const exportPairs = activePairsData.map(p => ({ a: p.a, b: p.b }));
+            let currentHtml = document.documentElement.outerHTML;
+            const dataString = `const preloadedPairs = ${JSON.stringify(exportPairs)};`;
+            const regex = /<script id="preloadedData">([\s\S]*?)<\/script>/;
+            currentHtml = currentHtml.replace(regex, `<script id="preloadedData">${dataString}<\/script>`);
+            const blob = new Blob(["<!DOCTYPE html>\n" + currentHtml], { type: "text/html" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `${fileName}.html`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+    </script>
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+
+</body></html>
