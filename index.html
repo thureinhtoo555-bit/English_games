@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium 3D Wooden Matching Studio</title>
+    <title>Premium 3D Team Matching Studio</title>
     <style>
         /* CSS: Main Layout */
         html,
@@ -14,15 +14,8 @@
             width: 100%;
             height: 100%;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
-        }
-
-        body {
+            overflow: hidden;
             background-color: #1a252f;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
 
         /* Creator Section */
@@ -36,6 +29,8 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             text-align: left;
             box-sizing: border-box;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         h1 {
@@ -97,20 +92,12 @@
             margin-bottom: 20px;
         }
 
-        .btn-add:hover {
-            background-color: #2980b9;
-        }
-
         .btn-generate {
             background-color: #2ecc71;
             color: white;
             width: 100%;
             font-size: 18px;
             margin-top: 15px;
-        }
-
-        .btn-generate:hover {
-            background-color: #27ae60;
         }
 
         .btn-back {
@@ -120,20 +107,11 @@
             font-size: 16px;
         }
 
-        .btn-back:hover {
-            background-color: #64748b;
-        }
-
         .btn-save-file {
             background-color: #e67e22;
             color: white;
             padding: 10px 20px;
             font-size: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-save-file:hover {
-            background-color: #d35400;
         }
 
         .btn-delete {
@@ -143,8 +121,88 @@
             border-radius: 6px;
         }
 
-        .btn-delete:hover {
-            background-color: #c0392b;
+        /* Setup Team Section (အသင်းရွေးချယ်မှု ပေါပ်အပ်စနစ်) */
+        .setup-section {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .mode-options {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            padding: 15px 25px;
+            border: 2px solid #3498db;
+            background: transparent;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .mode-btn.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .team-inputs {
+            display: none;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .team-inputs label {
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+            color: #34495e;
+        }
+
+        .team-inputs input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+
+        .turn-select {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .turn-btn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            background: #f8fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .turn-btn.active {
+            background: #e67e22;
+            color: white;
+            border-color: #d35400;
         }
 
         /* Game Section */
@@ -152,7 +210,6 @@
             display: none;
             width: 100%;
             height: 100%;
-            box-sizing: border-box;
             position: relative;
         }
 
@@ -164,7 +221,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             box-sizing: border-box;
             background-color: #cd853f;
             background-image:
@@ -176,10 +233,53 @@
             box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.6);
         }
 
+        /* Scoreboard Header */
+        .scoreboard {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            justify-content: space-around;
+            background: rgba(44, 62, 80, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffffff;
+            color: white;
+        }
+
+        .team-score-card {
+            padding: 5px 20px;
+            border-radius: 8px;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .team-score-card.active-turn {
+            background: #e67e22;
+            box-shadow: 0 0 15px #e67e22;
+            animation: blink 1.5s infinite alternate;
+        }
+
+        .score-num {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        @keyframes blink {
+            0% {
+                border: 2px solid transparent;
+            }
+
+            100% {
+                border: 2px solid white;
+            }
+        }
+
         .match-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
             width: 90%;
             max-width: 1200px;
             margin: auto;
@@ -189,9 +289,10 @@
 
         /* 3D Card Flip Container */
         .card-container {
-            height: 140px;
+            height: 130px;
             perspective: 1200px;
             cursor: pointer;
+            position: relative;
         }
 
         .card-inner {
@@ -199,14 +300,61 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s, transform-origin 0.5s;
             transform-style: preserve-3d;
-            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5), inset 0 -4px 0 rgba(0, 0, 0, 0.4);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
             border-radius: 12px;
         }
 
         .card-container.is-flipped .card-inner {
             transform: rotateY(180deg);
+        }
+
+        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: အမှန်/အမှား Feedback စနစ် --- */
+        .feedback-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 70px;
+            font-weight: bold;
+            z-index: 10;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 12px;
+            transition: opacity 0.2s;
+        }
+
+        .feedback-correct {
+            color: #2ecc71;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+
+        .feedback-wrong {
+            color: #e74c3c;
+            text-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+
+        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: ကတ်ပြား အောက်ပြုတ်ကျပြီး ဖျောက်ပေးမည့် Animation --- */
+        .card-container.fall-down .card-inner {
+            animation: fallAnimation 0.6s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+        }
+
+        @keyframes fallAnimation {
+            0% {
+                transform: rotateY(180deg) translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotateY(180deg) translateY(300px);
+                opacity: 0;
+            }
         }
 
         .card-face {
@@ -238,30 +386,11 @@
         .card-back {
             background: linear-gradient(135deg, #1abc9c, #2ecc71);
             color: white;
-            font-size: 22px;
+            font-size: 20px;
             transform: rotateY(180deg);
             word-break: break-word;
             overflow: hidden;
             border: 3px solid #ffffff;
-        }
-
-        .card-container.is-matched .card-inner .card-back {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            animation: pulse 0.5s ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: rotateY(180deg) scale(1);
-            }
-
-            50% {
-                transform: rotateY(180deg) scale(1.08);
-            }
-
-            100% {
-                transform: rotateY(180deg) scale(1);
-            }
         }
 
         .card-back img {
@@ -272,12 +401,60 @@
             background-color: white;
         }
 
+        /* End Game Alert Window */
+        .end-game-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            z-index: 200;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .end-game-popup h2 {
+            color: #2c3e50;
+            font-size: 36px;
+            margin: 0 0 15px 0;
+        }
+
+        .end-game-popup p {
+            font-size: 20px;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+        }
+
+        .btn-restart {
+            background-color: #2ecc71;
+            color: white;
+            font-size: 20px;
+            padding: 15px 40px;
+            width: auto;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
         .game-controls {
             width: 100%;
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-top: 10px;
+        }
+
+        .overlay-bg {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 90;
         }
     </style>
 </head>
@@ -285,18 +462,50 @@
 <body>
 
     <div id="creatorPage" class="creator-section">
-        <h1>🧩 Premium 3D Wooden Matching Studio</h1>
+        <h1> My Educational Game Studio</h1>
         <p class="subtitle">Create your game with unlimited words and images in Full-Screen.</p>
-
         <div id="wordInputsContainer"></div>
-
         <button class="btn btn-add" onclick="addNewPairRow()">➕ Add New Pair</button>
-        <button class="btn btn-generate" onclick="generateGame()">Generate Full-Screen Game 🚀</button>
+        <button class="btn btn-generate" onclick="openGameSetup()">Generate Full-Screen Game 🚀</button>
+    </div>
+
+    <div id="overlayBg" class="overlay-bg"></div>
+
+    <div id="setupPopup" class="setup-section">
+        <h2>🎮 Select Game Mode</h2>
+        <div class="mode-options">
+            <button class="mode-btn active" id="btnSolo" onclick="setMode('solo')">Solo Player</button>
+            <button class="mode-btn" id="btnTeam" onclick="setMode('team')">Team Versus</button>
+        </div>
+        <div id="teamInputs" class="team-inputs">
+            <label>Team 1 Name:</label>
+            <input type="text" id="t1Name" value="Team A">
+            <label>Team 2 Name:</label>
+            <input type="text" id="t2Name" value="Team B">
+            <label>Who plays first?</label>
+            <div class="turn-select">
+                <button class="turn-btn active" id="btnT1Turn" onclick="setFirstTurn(1)">Team 1</button>
+                <button class="turn-btn" id="btnT2Turn" onclick="setFirstTurn(2)">Team 2</button>
+            </div>
+        </div>
+        <button class="btn btn-generate" style="margin-top:25px;" onclick="startGameNow()">Start Game 🏁</button>
     </div>
 
     <div id="gamePage" class="game-section">
         <div class="game-arena">
+            <div class="scoreboard" id="scoreboard">
+                <div class="team-score-card" id="scoreCard1">
+                    <div id="displayName1">Player</div>
+                    <div class="score-num" id="scoreNum1">0</div>
+                </div>
+                <div class="team-score-card" id="scoreCard2" style="display:none;">
+                    <div id="displayName2">Team B</div>
+                    <div class="score-num" id="scoreNum2">0</div>
+                </div>
+            </div>
+
             <div class="match-container" id="gameBoard"></div>
+
             <div class="game-controls">
                 <button class="btn btn-back" onclick="showCreator()">⬅ Edit Game</button>
                 <button class="btn btn-save-file" onclick="exportCurrentGame()">📥 Save Game File</button>
@@ -304,40 +513,42 @@
         </div>
     </div>
 
+    <div id="endGamePopup" class="end-game-popup">
+        <h2 id="winTitle">🏆 Congratulations!</h2>
+        <p id="winDetails">Game Completed successfully!</p>
+        <button class="btn btn-restart" onclick="restartGameWithShuffle()">🔄 Play Again (Shuffle Cards)</button>
+    </div>
+
     <script id="preloadedData">const preloadedPairs = [];</script>
 
     <script>
         let pairCount = 0;
-
-        const correctSound = new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_wobble.ogg");
-        const wrongSound = new Audio("https://actions.google.com/sounds/v1/cartoon/slide_whistle_down.ogg");
-        const flipSound = new Audio("https://actions.google.com/sounds/v1/digital/soft_click.ogg");
+        let gameMode = 'solo';
+        let activeTurn = 1;
+        let scores = { 1: 0, 2: 0 };
+        let activePairsData = [];
+        let flippedCards = [];
+        let totalMatches = 0;
+        let matchesFound = 0;
 
         window.onload = function () {
-            // အကယ်၍ အသေသိမ်းထားသော ဒေတာဟောင်းရှိပါက ၎င်းကို အလိုအလျောက် ထည့်သွင်းပြသမည်
             if (typeof preloadedPairs !== 'undefined' && preloadedPairs.length > 0) {
-                preloadedPairs.forEach(pair => {
-                    addNewPairRow(pair.a, pair.b);
-                });
-                generateGame(); // တိုက်ရိုက် ဂိမ်းထဲသို့ ဝင်ရောက်မည်
+                preloadedPairs.forEach(pair => { addNewPairRow(pair.a, pair.b); });
+                openGameSetup();
             } else {
-                for (let i = 0; i < 3; i++) {
-                    addNewPairRow();
-                }
+                for (let i = 0; i < 3; i++) { addNewPairRow(); }
             }
         };
 
         function addNewPairRow(valA = '', valB = '') {
             pairCount++;
             const container = document.getElementById("wordInputsContainer");
-
             const row = document.createElement("div");
             row.classList.add("word-pair-row");
             row.id = `pairRow_${pairCount}`;
-
             row.innerHTML = `
                 <span class="pair-number">Pair ${pairCount}</span>
-                <input type="text" class="input-word-a" placeholder="Word (e.g. Apple)" value="${valA}">
+                <input type="text" class="input-word-a" placeholder="Word" value="${valA}">
                 <input type="text" class="input-word-b" placeholder="Definition OR Image URL" value="${valB}">
                 <button class="btn btn-delete" onclick="deletePairRow(${pairCount})">🗑</button>
             `;
@@ -349,57 +560,98 @@
             if (row) row.remove();
         }
 
+        function openGameSetup() {
+            document.getElementById("overlayBg").style.display = "block";
+            document.getElementById("setupPopup").style.display = "block";
+        }
+
+        function setMode(mode) {
+            gameMode = mode;
+            document.getElementById("btnSolo").classList.toggle("active", mode === 'solo');
+            document.getElementById("btnTeam").classList.toggle("active", mode === 'team');
+            document.getElementById("teamInputs").style.display = mode === 'team' ? 'block' : 'none';
+        }
+
+        function setFirstTurn(teamNum) {
+            activeTurn = teamNum;
+            document.getElementById("btnT1Turn").classList.toggle("active", teamNum === 1);
+            document.getElementById("btnT2Turn").classList.toggle("active", teamNum === 2);
+        }
+
         function showCreator() {
             document.getElementById("creatorPage").style.display = "block";
             document.getElementById("gamePage").style.display = "none";
+            document.getElementById("endGamePopup").style.display = "none";
+            document.getElementById("overlayBg").style.display = "none";
         }
 
-        function isImageUrl(text) {
-            return text.startsWith("http://") || text.startsWith("https://") || text.includes("data:image");
-        }
+        function isImageUrl(text) { return text.startsWith("http://") || text.startsWith("https://") || text.includes("data:image"); }
 
-        let activePairsForExport = [];
-
-        function generateGame() {
+        function startGameNow() {
             const rows = document.querySelectorAll(".word-pair-row");
-            let pairs = [];
+            activePairsData = [];
             let isValid = true;
-            activePairsForExport = [];
 
             rows.forEach((row, index) => {
                 const inputA = row.querySelector(".input-word-a").value.trim();
                 const inputB = row.querySelector(".input-word-b").value.trim();
-
-                if (inputA && inputB) {
-                    pairs.push({ id: index, a: inputA, b: inputB });
-                    activePairsForExport.push({ a: inputA, b: inputB });
-                } else if (inputA || inputB) {
-                    isValid = false;
-                }
+                if (inputA && inputB) { activePairsData.push({ id: index, a: inputA, b: inputB }); }
+                else if (inputA || inputB) { isValid = false; }
             });
 
-            if (!isValid || pairs.length === 0) {
+            if (!isValid || activePairsData.length === 0) {
                 alert("Please fill both sides of the word pairs, or delete the empty rows!");
                 return;
             }
 
+            document.getElementById("setupPopup").style.display = "none";
+            document.getElementById("overlayBg").style.display = "none";
             document.getElementById("creatorPage").style.display = "none";
             document.getElementById("gamePage").style.display = "block";
 
+            // Setup Scoreboard Interface
+            scores = { 1: 0, 2: 0 };
+            document.getElementById("scoreNum1").innerText = "0";
+            document.getElementById("scoreNum2").innerText = "0";
+
+            if (gameMode === 'solo') {
+                document.getElementById("displayName1").innerText = "Solo Player";
+                document.getElementById("scoreCard2").style.display = "none";
+                document.getElementById("scoreCard1").classList.add("active-turn");
+                activeTurn = 1;
+            } else {
+                document.getElementById("displayName1").innerText = document.getElementById("t1Name").value;
+                document.getElementById("displayName2").innerText = document.getElementById("t2Name").value;
+                document.getElementById("scoreCard2").style.display = "block";
+                updateTurnUI();
+            }
+
+            totalMatches = activePairsData.length;
+            matchesFound = 0;
+            buildGameBoard();
+        }
+
+        function updateTurnUI() {
+            if (gameMode === 'solo') return;
+            document.getElementById("scoreCard1").classList.toggle("active-turn", activeTurn === 1);
+            document.getElementById("scoreCard2").classList.toggle("active-turn", activeTurn === 2);
+        }
+
+        function buildGameBoard() {
             const gameBoard = document.getElementById("gameBoard");
             gameBoard.innerHTML = "";
+            flippedCards = [];
 
-            let cardsData = [];
-            pairs.forEach(pair => {
-                cardsData.push({ id: pair.id, text: pair.a });
-                cardsData.push({ id: pair.id, text: pair.b });
+            let cards = [];
+            activePairsData.forEach(pair => {
+                cards.push({ id: pair.id, text: pair.a });
+                cards.push({ id: pair.id, text: pair.b });
             });
 
-            cardsData.sort(() => Math.random() - 0.5);
+            // ဖဲမွှေသလို နေရာ ရောမွှေခြင်း (Shuffle)
+            cards.sort(() => Math.random() - 0.5);
 
-            let flippedCards = [];
-
-            cardsData.forEach((data, index) => {
+            cards.forEach((data, index) => {
                 const container = document.createElement("div");
                 container.classList.add("card-container");
                 container.dataset.id = data.id;
@@ -414,59 +666,137 @@
                 back.classList.add("card-face", "card-back");
 
                 if (isImageUrl(data.text)) {
-                    const img = document.createElement("img");
-                    img.src = data.text;
-                    img.alt = "Game Image";
-                    back.appendChild(img);
+                    const img = document.createElement("img"); img.src = data.text; back.appendChild(img);
                 } else {
                     back.innerText = data.text;
                 }
 
-                inner.appendChild(front); inner.appendChild(back); container.appendChild(inner);
+                // အမှန်/အမှား သင်္ကေတ ပြသမည့် Layer
+                const correctOverlay = document.createElement("div");
+                correctOverlay.classList.add("feedback-overlay", "feedback-correct");
+                correctOverlay.innerText = "✓";
+
+                const wrongOverlay = document.createElement("div");
+                wrongOverlay.classList.add("feedback-overlay", "feedback-wrong");
+                wrongOverlay.innerText = "✗";
+
+                inner.appendChild(front); inner.appendChild(back);
+                inner.appendChild(correctOverlay); inner.appendChild(wrongOverlay);
+                container.appendChild(inner);
 
                 container.onclick = function () {
-                    if (container.classList.contains("is-flipped") || container.classList.contains("is-matched") || flippedCards.length === 2) return;
+                    if (container.classList.contains("is-flipped") || container.classList.contains("fall-down") || flippedCards.length === 2) return;
 
-                    flipSound.play();
                     container.classList.add("is-flipped");
                     flippedCards.push(container);
 
                     if (flippedCards.length === 2) {
-                        if (flippedCards[0].dataset.id === flippedCards[1].dataset.id) {
-                            setTimeout(() => { correctSound.play(); }, 300);
-                            flippedCards[0].classList.add("is-matched");
-                            flippedCards[1].classList.add("is-matched");
-                            flippedCards = [];
-                        } else {
-                            setTimeout(() => { wrongSound.play(); }, 400);
-                            setTimeout(() => {
-                                flippedCards[0].classList.remove("is-flipped");
-                                flippedCards[1].classList.remove("is-flipped");
-                                flippedCards = [];
-                            }, 1000);
-                        }
+                        checkMatchLogic();
                     }
                 };
                 gameBoard.appendChild(container);
             });
         }
 
-        /* --- အသစ်ထည့်သွင်းထားသော စနစ်: လက်ရှိ ဒေတာများကို ဖိုင်အဖြစ် အသေသိမ်းဆည်းပေးမည့် ကုဒ် --- */
+        function checkMatchLogic() {
+            const [card1, card2] = flippedCards;
+
+            if (card1.dataset.id === card2.dataset.id) {
+                // အဖြေမှန်ပါက - အမှန်ခြစ်ပြခြင်း
+                card1.querySelector(".feedback-correct").style.opacity = "1";
+                card2.querySelector(".feedback-correct").style.opacity = "1";
+
+                // အမှတ်ပေါင်းပေးခြင်း
+                scores[activeTurn]++;
+                document.getElementById(`scoreNum${activeTurn}`).innerText = scores[activeTurn];
+                matchesFound++;
+
+                setTimeout(() => {
+                    // ကတ်ပြား အောက်သို့ ပြုတ်ကျ ဖျောက်ပေးခြင်း Animation
+                    card1.classList.add("fall-down");
+                    card2.classList.add("fall-down");
+                    flippedCards = [];
+
+                    // ဂိမ်းပြီးမပြီး စစ်ဆေးခြင်း
+                    if (matchesFound === totalMatches) { showEndGameResult(); }
+                }, 600);
+
+            } else {
+                // အဖြေမှားပါက - အမှားခြစ်ပြခြင်း
+                card1.querySelector(".feedback-wrong").style.opacity = "1";
+                card2.querySelector(".feedback-wrong").style.opacity = "1";
+
+                setTimeout(() => {
+                    // ခြစ်ရာများ ပြန်ဖျောက်ပြီး ကတ်ကို ပြန်မှောက်ခြင်း
+                    card1.querySelector(".feedback-wrong").style.opacity = "0";
+                    card2.querySelector(".feedback-wrong").style.opacity = "0";
+                    card1.classList.remove("is-flipped");
+                    card2.classList.remove("is-flipped");
+                    flippedCards = [];
+
+                    // နောက်တစ်သင်းသို့ အလှည့်ပြောင်းခြင်း (Solo မဟုတ်လျှင်)
+                    if (gameMode === 'team') {
+                        activeTurn = activeTurn === 1 ? 2 : 1;
+                        updateTurnUI();
+                    }
+                }, 1000);
+            }
+        }
+
+        function showEndGameResult() {
+            document.getElementById("overlayBg").style.display = "block";
+            const popup = document.getElementById("endGamePopup");
+            popup.style.display = "block";
+
+            if (gameMode === 'solo') {
+                document.getElementById("winTitle").innerText = "🏆 Game Completed!";
+                document.getElementById("winDetails").innerText = `Great Job! You matched all pairs!`;
+            } else {
+                const t1Name = document.getElementById("displayName1").innerText;
+                const t2Name = document.getElementById("displayName2").innerText;
+
+                if (scores[1] > scores[2]) {
+                    document.getElementById("winTitle").innerText = `🏆 ${t1Name} Wins!`;
+                } else if (scores[2] > scores[1]) {
+                    document.getElementById("winTitle").innerText = `🏆 ${t2Name} Wins!`;
+                } else {
+                    document.getElementById("winTitle").innerText = "🤝 It's a Tie!";
+                }
+                document.getElementById("winDetails").innerText = `${t1Name}: ${scores[1]} Pts | ${t2Name}: ${scores[2]} Pts`;
+            }
+        }
+
+        // --- ပြင်ဆင်လိုက်သည့်နေရာ: ပွဲတိုင်း ဖဲမွှေသလို နေရာအစုံအလင်ပြောင်းလဲပေးမည့် စနစ် ---
+        function restartGameWithShuffle() {
+            document.getElementById("endGamePopup").style.display = "none";
+            document.getElementById("overlayBg").style.display = "none";
+
+            // အမှတ်များ ပြန်စခြင်း
+            scores = { 1: 0, 2: 0 };
+            document.getElementById("scoreNum1").innerText = "0";
+            document.getElementById("scoreNum2").innerText = "0";
+            matchesFound = 0;
+
+            if (gameMode === 'team') {
+                // ပြိုင်ပွဲအသစ်မှာ စောစောက အရှုံးအနိုင်ပေါ်မူတည်ပြီး အလှည့်ပြန်ညှိခြင်း (သို့မဟုတ် အသင်း ၁ က ပြန်စခြင်း)
+                activeTurn = document.getElementById("btnT1Turn").classList.contains("active") ? 1 : 2;
+                updateTurnUI();
+            }
+
+            // ဘုတ်အသစ်ကို ဖဲမွှေပြီး ပြန်ဆောက်ခြင်း
+            buildGameBoard();
+        }
+
         function exportCurrentGame() {
             const fileName = prompt("Enter a name for this game file:", "my-english-game");
             if (!fileName) return;
 
-            // လက်ရှိ HTML တစ်ခုလုံး၏ ကုဒ်များကို ဖတ်ယူခြင်း
+            const exportPairs = activePairsData.map(p => ({ a: p.a, b: p.b }));
             let currentHtml = document.documentElement.outerHTML;
-
-            // ဒေတာဟောင်းများကို ရှင်းလင်းပြီး ဒေတာအသစ်ဖြင့် အစားထိုးရန် စာသားပြင်ဆင်ခြင်း
-            const dataString = `const preloadedPairs = ${JSON.stringify(activePairsForExport)};`;
-
-            // <script id="preloadedData"> နေရာတွင် ဒေတာအသစ်ကို အစားထိုးထည့်သွင်းခြင်း
+            const dataString = `const preloadedPairs = ${JSON.stringify(exportPairs)};`;
             const regex = /<script id="preloadedData">([\s\S]*?)<\/script>/;
             currentHtml = currentHtml.replace(regex, `<script id="preloadedData">${dataString}<\/script>`);
 
-            // ဖိုင်အဖြစ် အလိုအလျောက် ဒေါင်းလုဒ်လုပ်ပေးခြင်း
             const blob = new Blob(["<!DOCTYPE html>\n" + currentHtml], { type: "text/html" });
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob);
