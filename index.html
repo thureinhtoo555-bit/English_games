@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium 3D Team Matching Studio</title>
+    <title>Premium 3D Team Matching Studio - Shell Shuffle Edition</title>
     <style>
         /* CSS: Main Layout */
         html,
@@ -16,6 +16,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow: hidden;
             background-color: #1a252f;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Creator Section */
@@ -71,7 +78,7 @@
             font-size: 14px;
         }
 
-        /* Buttons Styles */
+        /* Buttons */
         .btn {
             padding: 12px 20px;
             font-size: 16px;
@@ -121,7 +128,7 @@
             border-radius: 6px;
         }
 
-        /* Setup Team Section (အသင်းရွေးချယ်မှု ပေါပ်အပ်စနစ်) */
+        /* Setup Team Section */
         .setup-section {
             display: none;
             position: fixed;
@@ -245,6 +252,7 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
             border: 2px solid #ffffff;
             color: white;
+            z-index: 5;
         }
 
         .team-score-card {
@@ -266,16 +274,6 @@
             margin-top: 5px;
         }
 
-        @keyframes blink {
-            0% {
-                border: 2px solid transparent;
-            }
-
-            100% {
-                border: 2px solid white;
-            }
-        }
-
         .match-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -285,6 +283,7 @@
             margin: auto;
             perspective: 1200px;
             justify-content: center;
+            position: relative;
         }
 
         /* 3D Card Flip Container */
@@ -300,7 +299,7 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s, transform-origin 0.5s;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s;
             transform-style: preserve-3d;
             box-shadow: 0 12px 20px rgba(0, 0, 0, 0.5);
             border-radius: 12px;
@@ -308,53 +307,6 @@
 
         .card-container.is-flipped .card-inner {
             transform: rotateY(180deg);
-        }
-
-        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: အမှန်/အမှား Feedback စနစ် --- */
-        .feedback-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 70px;
-            font-weight: bold;
-            z-index: 10;
-            opacity: 0;
-            pointer-events: none;
-            border-radius: 12px;
-            transition: opacity 0.2s;
-        }
-
-        .feedback-correct {
-            color: #2ecc71;
-            text-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-        }
-
-        .feedback-wrong {
-            color: #e74c3c;
-            text-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
-        }
-
-        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: ကတ်ပြား အောက်ပြုတ်ကျပြီး ဖျောက်ပေးမည့် Animation --- */
-        .card-container.fall-down .card-inner {
-            animation: fallAnimation 0.6s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            pointer-events: none;
-        }
-
-        @keyframes fallAnimation {
-            0% {
-                transform: rotateY(180deg) translateY(0);
-                opacity: 1;
-            }
-
-            100% {
-                transform: rotateY(180deg) translateY(300px);
-                opacity: 0;
-            }
         }
 
         .card-face {
@@ -391,6 +343,7 @@
             word-break: break-word;
             overflow: hidden;
             border: 3px solid #ffffff;
+            position: relative;
         }
 
         .card-back img {
@@ -399,6 +352,81 @@
             object-fit: contain;
             border-radius: 8px;
             background-color: white;
+        }
+
+        /* Feedback Layers */
+        .feedback-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 75px;
+            font-weight: bold;
+            z-index: 15;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 8px;
+            transition: opacity 0.1s ease-in-out;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        .feedback-correct {
+            color: #2ecc71;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .feedback-wrong {
+            color: #e74c3c;
+            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Gravity Fall Animation */
+        .card-container.fall-down .card-inner {
+            animation: fallAnimation 0.6s forwards cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+        }
+
+        @keyframes fallAnimation {
+            0% {
+                transform: rotateY(180deg) translateY(0);
+                opacity: 1;
+            }
+
+            100% {
+                transform: rotateY(180deg) translateY(400px) rotate(15deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: ခွက်လှည့်ကစားနည်းလိုမျိုး ကတ်ပြားများ ဘယ်ညာအပြန်အလှန် နေရာချင်း ဖြတ်ကျော်မွှေမည့် Animation --- */
+        .card-container.shuffle-left-right {
+            animation: shellShuffle 0.6s ease-in-out forwards;
+        }
+
+        @keyframes shellShuffle {
+            0% {
+                transform: translate(0, 0) scale(1);
+                z-index: 1;
+            }
+
+            30% {
+                transform: translate(var(--move-x), var(--move-y)) scale(1.15);
+                z-index: 10;
+            }
+
+            70% {
+                transform: translate(var(--move-x), var(--move-y)) scale(1.15);
+                z-index: 10;
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1);
+                z-index: 1;
+            }
         }
 
         /* End Game Alert Window */
@@ -444,6 +472,7 @@
             display: flex;
             justify-content: center;
             gap: 20px;
+            z-index: 5;
         }
 
         .overlay-bg {
@@ -531,6 +560,47 @@
         let totalMatches = 0;
         let matchesFound = 0;
 
+        // --- ပြင်ဆင်လိုက်သည့်နေရာ: Game Show အသံစစ်စစ်ထွက်မည့် Electronic Buzzer Audio Engine ---
+        const AudioFX = {
+            ctx: null,
+            init() { if (!this.ctx) { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } },
+            playFlip() {
+                this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(500, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(700, this.ctx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.08, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+                osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+            },
+            playCorrect() {
+                // Game Show မှန်ကန်ကြောင်းပြသည့် တုံးတုံး တင်တင်! Buzzer သံစဉ်ဆင့်
+                this.init(); const t = this.ctx.currentTime;
+                const tone = (freq, start, duration) => {
+                    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                    osc.type = 'square'; osc.frequency.setValueAtTime(freq, start);
+                    gain.gain.setValueAtTime(0.08, start); gain.gain.linearRampToValueAtTime(0.001, start + duration);
+                    osc.connect(gain); gain.connect(this.ctx.destination); osc.start(start); osc.stop(start + duration);
+                };
+                tone(523.25, t, 0.1); tone(523.25, t + 0.12, 0.1); tone(659.25, t + 0.24, 0.4);
+            },
+            playWrong() {
+                // တကယ့် အမှား Buzzer ဝူးးးးးးးးး! သံအုန်းကြီး
+                this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(140, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.45);
+                gain.gain.setValueAtTime(0.12, this.ctx.currentTime); gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.45);
+                osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + 0.45);
+            },
+            playShuffle() {
+                this.init(); let t = this.ctx.currentTime;
+                for (let i = 0; i < 12; i++) {
+                    const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain(); osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300 + Math.random() * 200, t + (i * 0.05));
+                    gain.gain.setValueAtTime(0.04, t + (i * 0.05)); gain.gain.linearRampToValueAtTime(0.001, t + (i * 0.05) + 0.04);
+                    osc.connect(gain); gain.connect(this.ctx.destination); osc.start(t + (i * 0.05)); osc.stop(t + (i * 0.05) + 0.04);
+                }
+            }
+        };
+
         window.onload = function () {
             if (typeof preloadedPairs !== 'undefined' && preloadedPairs.length > 0) {
                 preloadedPairs.forEach(pair => { addNewPairRow(pair.a, pair.b); });
@@ -609,7 +679,6 @@
             document.getElementById("creatorPage").style.display = "none";
             document.getElementById("gamePage").style.display = "block";
 
-            // Setup Scoreboard Interface
             scores = { 1: 0, 2: 0 };
             document.getElementById("scoreNum1").innerText = "0";
             document.getElementById("scoreNum2").innerText = "0";
@@ -628,7 +697,9 @@
 
             totalMatches = activePairsData.length;
             matchesFound = 0;
+
             buildGameBoard();
+            triggerShellShuffleAnimation(); // ဖဲမွှေသည့် animation စတင်ခြင်း
         }
 
         function updateTurnUI() {
@@ -648,7 +719,6 @@
                 cards.push({ id: pair.id, text: pair.b });
             });
 
-            // ဖဲမွှေသလို နေရာ ရောမွှေခြင်း (Shuffle)
             cards.sort(() => Math.random() - 0.5);
 
             cards.forEach((data, index) => {
@@ -671,7 +741,6 @@
                     back.innerText = data.text;
                 }
 
-                // အမှန်/အမှား သင်္ကေတ ပြသမည့် Layer
                 const correctOverlay = document.createElement("div");
                 correctOverlay.classList.add("feedback-overlay", "feedback-correct");
                 correctOverlay.innerText = "✓";
@@ -680,21 +749,48 @@
                 wrongOverlay.classList.add("feedback-overlay", "feedback-wrong");
                 wrongOverlay.innerText = "✗";
 
+                back.appendChild(correctOverlay);
+                back.appendChild(wrongOverlay);
+
                 inner.appendChild(front); inner.appendChild(back);
-                inner.appendChild(correctOverlay); inner.appendChild(wrongOverlay);
                 container.appendChild(inner);
 
                 container.onclick = function () {
+                    // ကတ်နှစ်ခုလုံး လှန်ထားစဉ် သို့မဟုတ် မှန်ပြီးသားကတ်ဖြစ်ပါက နှိပ်မရအောင် တားဆီးခြင်း
                     if (container.classList.contains("is-flipped") || container.classList.contains("fall-down") || flippedCards.length === 2) return;
 
+                    AudioFX.playFlip();
                     container.classList.add("is-flipped");
                     flippedCards.push(container);
 
+                    // --- ပြင်ဆင်လိုက်သည့်နေရာ: ကတ် ၂ ခုလုံး သေသေချာချာ လှန်ပြီးမှသာ Logic စစ်ဆေးခြင်း ---
                     if (flippedCards.length === 2) {
-                        checkMatchLogic();
+                        // ကတ်အနောက်ဘက် လှည့်ထွက်လာသည့် Animation စက္ကန့် (400ms) ပြည့်အောင် စောင့်ပြီးမှ စစ်ဆေးခြင်း
+                        setTimeout(checkMatchLogic, 400);
                     }
                 };
                 gameBoard.appendChild(container);
+            });
+        }
+
+        // --- ပြင်ဆင်လိုက်သည့်နေရာ: ကတ်များ ဘယ်ညာ၊ အထက်အောက် လျှောတိုက် လှည့်မွှေမည့် ခွက်လှည့် Animation Logic ---
+        function triggerShellShuffleAnimation() {
+            AudioFX.playShuffle();
+            const containers = document.querySelectorAll(".card-container");
+
+            containers.forEach((card, i) => {
+                // ကတ်တစ်ခုချင်းစီအတွက် လှုပ်ရှားမည့် စတုရန်းလမ်းကြောင်းများကို Random တွက်ချက်ခြင်း
+                const randomX = (Math.random() * 160 - 80) + 'px';
+                const randomY = (Math.random() * 120 - 60) + 'px';
+
+                card.style.setProperty('--move-x', randomX);
+                card.style.setProperty('--move-y', randomY);
+                card.classList.add("shuffle-left-right");
+
+                // စက္ကန့်ပြည့်လျှင် Animation ဖြုတ်ပေးခြင်း
+                setTimeout(() => {
+                    card.classList.remove("shuffle-left-right");
+                }, 600);
             });
         }
 
@@ -702,39 +798,36 @@
             const [card1, card2] = flippedCards;
 
             if (card1.dataset.id === card2.dataset.id) {
-                // အဖြေမှန်ပါက - အမှန်ခြစ်ပြခြင်း
+                // ကတ်နှစ်ခုလုံး လှန်ပြီးမှသာ ✓ ခြစ်ရာကို အပေါ်က တပ်ပေးခြင်း
                 card1.querySelector(".feedback-correct").style.opacity = "1";
                 card2.querySelector(".feedback-correct").style.opacity = "1";
 
-                // အမှတ်ပေါင်းပေးခြင်း
+                AudioFX.playCorrect(); // အောင်ပွဲခံ Buzzer နှစ်ချက်ဆင့်သံ
                 scores[activeTurn]++;
                 document.getElementById(`scoreNum${activeTurn}`).innerText = scores[activeTurn];
                 matchesFound++;
 
                 setTimeout(() => {
-                    // ကတ်ပြား အောက်သို့ ပြုတ်ကျ ဖျောက်ပေးခြင်း Animation
                     card1.classList.add("fall-down");
                     card2.classList.add("fall-down");
                     flippedCards = [];
-
-                    // ဂိမ်းပြီးမပြီး စစ်ဆေးခြင်း
                     if (matchesFound === totalMatches) { showEndGameResult(); }
                 }, 600);
 
             } else {
-                // အဖြေမှားပါက - အမှားခြစ်ပြခြင်း
+                // ကတ်နှစ်ခုလုံး လှန်ပြီးမှသာ ✗ ခြစ်ရာကို ပြသခြင်း
                 card1.querySelector(".feedback-wrong").style.opacity = "1";
                 card2.querySelector(".feedback-wrong").style.opacity = "1";
 
+                AudioFX.playWrong(); // အမှား Buzzer သံအုန်းကြီး
+
                 setTimeout(() => {
-                    // ခြစ်ရာများ ပြန်ဖျောက်ပြီး ကတ်ကို ပြန်မှောက်ခြင်း
                     card1.querySelector(".feedback-wrong").style.opacity = "0";
                     card2.querySelector(".feedback-wrong").style.opacity = "0";
                     card1.classList.remove("is-flipped");
                     card2.classList.remove("is-flipped");
                     flippedCards = [];
 
-                    // နောက်တစ်သင်းသို့ အလှည့်ပြောင်းခြင်း (Solo မဟုတ်လျှင်)
                     if (gameMode === 'team') {
                         activeTurn = activeTurn === 1 ? 2 : 1;
                         updateTurnUI();
@@ -750,60 +843,47 @@
 
             if (gameMode === 'solo') {
                 document.getElementById("winTitle").innerText = "🏆 Game Completed!";
-                document.getElementById("winDetails").innerText = `Great Job! You matched all pairs!`;
+                document.getElementById("winDetails").innerText = `Great Job!`;
             } else {
                 const t1Name = document.getElementById("displayName1").innerText;
                 const t2Name = document.getElementById("displayName2").innerText;
-
-                if (scores[1] > scores[2]) {
-                    document.getElementById("winTitle").innerText = `🏆 ${t1Name} Wins!`;
-                } else if (scores[2] > scores[1]) {
-                    document.getElementById("winTitle").innerText = `🏆 ${t2Name} Wins!`;
-                } else {
-                    document.getElementById("winTitle").innerText = "🤝 It's a Tie!";
-                }
+                if (scores[1] > scores[2]) { document.getElementById("winTitle").innerText = `🏆 ${t1Name} Wins!`; }
+                else if (scores[2] > scores[1]) { document.getElementById("winTitle").innerText = `🏆 ${t2Name} Wins!`; }
+                else { document.getElementById("winTitle").innerText = "🤝 It's a Tie!"; }
                 document.getElementById("winDetails").innerText = `${t1Name}: ${scores[1]} Pts | ${t2Name}: ${scores[2]} Pts`;
             }
         }
 
-        // --- ပြင်ဆင်လိုက်သည့်နေရာ: ပွဲတိုင်း ဖဲမွှေသလို နေရာအစုံအလင်ပြောင်းလဲပေးမည့် စနစ် ---
         function restartGameWithShuffle() {
             document.getElementById("endGamePopup").style.display = "none";
             document.getElementById("overlayBg").style.display = "none";
-
-            // အမှတ်များ ပြန်စခြင်း
             scores = { 1: 0, 2: 0 };
             document.getElementById("scoreNum1").innerText = "0";
             document.getElementById("scoreNum2").innerText = "0";
             matchesFound = 0;
 
             if (gameMode === 'team') {
-                // ပြိုင်ပွဲအသစ်မှာ စောစောက အရှုံးအနိုင်ပေါ်မူတည်ပြီး အလှည့်ပြန်ညှိခြင်း (သို့မဟုတ် အသင်း ၁ က ပြန်စခြင်း)
                 activeTurn = document.getElementById("btnT1Turn").classList.contains("active") ? 1 : 2;
                 updateTurnUI();
             }
 
-            // ဘုတ်အသစ်ကို ဖဲမွှေပြီး ပြန်ဆောက်ခြင်း
             buildGameBoard();
+            triggerShellShuffleAnimation(); // ပြန်ဆော့တိုင်း ကတ်များကို ခွက်လှည့်သလို မွှေနှောက်ခြင်း
         }
 
         function exportCurrentGame() {
             const fileName = prompt("Enter a name for this game file:", "my-english-game");
             if (!fileName) return;
-
             const exportPairs = activePairsData.map(p => ({ a: p.a, b: p.b }));
             let currentHtml = document.documentElement.outerHTML;
             const dataString = `const preloadedPairs = ${JSON.stringify(exportPairs)};`;
             const regex = /<script id="preloadedData">([\s\S]*?)<\/script>/;
             currentHtml = currentHtml.replace(regex, `<script id="preloadedData">${dataString}<\/script>`);
-
             const blob = new Blob(["<!DOCTYPE html>\n" + currentHtml], { type: "text/html" });
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob);
             a.download = `${fileName}.html`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
     </script>
 </body>
