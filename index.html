@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Wooden Matching Studio - Screen Fixed</title>
+    <title>Premium 3D Team Matching Studio - GitHub Fixed</title>
     <style>
         /* CSS: Main Layout */
         html,
@@ -17,7 +17,6 @@
             background-color: #1a252f;
         }
 
-        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: Elements တွေ Layout မရှုပ်ထွေးအောင် ဆောက်တည်ပုံစနစ်ကို အသစ်ပြောင်းလဲခြင်း --- */
         .app-container {
             position: relative;
             width: 100%;
@@ -130,20 +129,18 @@
             border-radius: 6px;
         }
 
-        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: Screen ဘယ်လောက်ကြီးကြီး အလယ်ခေါင်တည့်တည့်မှာပဲ ပေါ်စေမည့် Setup Window စနစ် --- */
+        /* Setup Team Section */
         .setup-section {
             display: none;
             position: fixed;
             top: 50% !important;
             left: 50% !important;
             transform: translate(-50%, -50%) !important;
-            /* Screen ရဲ့ အလယ်ဗဟိုကို ညှိပစ်ခြင်း */
             background: white;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
             z-index: 1000 !important;
-            /* အခြား Elements များထက် အမြဲအပေါ်ရောက်စေရန် */
             width: 90%;
             max-width: 450px;
             text-align: center;
@@ -595,7 +592,15 @@
 
         const AudioFX = {
             ctx: null,
-            init() { if (!this.ctx) { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } },
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                // --- ပြင်ဆင်လိုက်သည့်နေရာ: GitHub ပေါ်တွင် Browser က ပိတ်ထားသော အသံလိုင်းကို အဓမ္မပြန်ဖွင့်ခိုင်းသည့်စနစ် ---
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            },
             playFlip() {
                 try {
                     this.init(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
@@ -720,6 +725,9 @@
         function isImageUrl(text) { return text.startsWith("http://") || text.startsWith("https://") || text.includes("data:image"); }
 
         function startGameNow() {
+            // --- ပြင်ဆင်လိုက်သည့်နေရာ: ဆော့ခလုတ်နှိပ်လိုက်တာနဲ့ အသံစနစ်ကို ချက်ချင်းနိုးကြားစေခြင်း ---
+            AudioFX.init();
+
             document.getElementById("setupPopup").style.display = "none";
             document.getElementById("overlayBg").style.display = "none";
             document.getElementById("creatorPage").style.display = "none";
@@ -804,7 +812,10 @@
                 container.onclick = function () {
                     if (container.classList.contains("is-flipped") || container.classList.contains("fall-down") || flippedCards.length === 2) return;
 
+                    // --- ပြင်ဆင်လိုက်သည့်နေရာ: ကတ်ပြားကို တစ်ချက်စနှိပ်လိုက်တာနဲ့ အသံလိုင်းစနစ်ကို တိုက်ရိုက် Resume လုပ်ပေးခြင်း ---
+                    AudioFX.init();
                     AudioFX.playFlip();
+
                     container.classList.add("is-flipped");
                     flippedCards.push(container);
 
