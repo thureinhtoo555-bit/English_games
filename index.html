@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium 3D Team Matching Studio - PIN Edition</title>
+    <title>Premium 3D Studio - File Drag & Drop Edition</title>
     <style>
         /* CSS: Main Layout */
         html,
@@ -54,33 +54,32 @@
             text-align: center;
         }
 
-        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: PIN နံပါတ်ရိုက်ပြီး ဂိမ်းအဟောင်း ပြန်ခေါ်မည့် Interface --- */
-        .pin-load-box {
+        /* --- ပြင်ဆင်လိုက်သည့်နေရာ: ဆရာ့စိတ်ကြိုက် ဖိုင်ဆွဲထည့်ပြီး ဂိမ်းအဟောင်း ချက်ချင်းဖွင့်မည့် Dropzone --- */
+        .file-dropzone {
             background: #edf2f7;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
             margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            border: 2px dashed #cbd5e1;
+            text-align: center;
+            border: 2px dashed #3498db;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .pin-load-box input {
-            padding: 10px;
+        .file-dropzone:hover {
+            background: #e2e8f0;
+        }
+
+        .file-dropzone p {
+            margin: 0;
             font-size: 16px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e1;
-            width: 150px;
-            text-align: center;
+            color: #2c3e50;
             font-weight: bold;
         }
 
-        .btn-load-pin {
-            background-color: #9b59b6;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
+        .file-dropzone span {
+            font-size: 13px;
+            color: #7f8c8d;
         }
 
         .word-pair-row {
@@ -144,7 +143,7 @@
             font-size: 16px;
         }
 
-        .btn-copy-pin {
+        .btn-save-file {
             background-color: #e67e22;
             color: white;
             padding: 10px 20px;
@@ -483,7 +482,6 @@
             }
         }
 
-        /* End Game Alert Window */
         .end-game-popup {
             display: none;
             position: fixed;
@@ -550,10 +548,11 @@
             <h1> My Educational Game Studio</h1>
             <p class="subtitle">Create your game with unlimited words and images in Full-Screen.</p>
 
-            <div class="pin-load-box">
-                <span>🔑 Enter Game PIN to Play:</span>
-                <input type="number" id="pinInput" placeholder="e.g. 1234">
-                <button class="btn btn-load-pin" onclick="loadGameByPin()">Load Game 📥</button>
+            <div class="file-dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+                <p>📥 Drop Game Data File Here or Click to Open</p>
+                <span>(ဆွဲထည့်လိုက်တာနဲ့ စာလုံးတွဲတွေ အလိုအလျောက် ပေါ်လာပါမယ်)</span>
+                <input type="file" id="fileInput" style="display:none;" accept=".txt"
+                    onchange="handleFileSelect(event)">
             </div>
 
             <div id="wordInputsContainer"></div>
@@ -601,7 +600,7 @@
 
                 <div class="game-controls">
                     <button class="btn btn-back" onclick="showCreator()">⬅ Edit Game</button>
-                    <button class="btn btn-copy-pin" onclick="generateAndGetGamePIN()">📋 Get Game PIN Code</button>
+                    <button class="btn btn-save-file" onclick="saveGameAsTextFile()">📥 Save Game Data File</button>
                 </div>
             </div>
         </div>
@@ -674,8 +673,8 @@
         };
 
         window.onload = function () {
-            // စစချင်း ကွက်လပ် ၃ ခု ဆောက်ပေးခြင်း
             for (let i = 0; i < 3; i++) { addNewPairRow(); }
+            setupDragAndDrop();
         };
 
         function addNewPairRow(valA = '', valB = '') {
@@ -696,6 +695,42 @@
         function deletePairRow(id) {
             const row = document.getElementById(`pairRow_${id}`);
             if (row) row.remove();
+        }
+
+        // --- ပြင်ဆင်လိုက်သည့်နေရာ: ဆရာ့ဖိုင်ကို ဖတ်ယူမည့် Drag & Drop စနစ် ---
+        function setupDragAndDrop() {
+            const dropzone = document.getElementById("dropzone");
+            dropzone.ondragover = () => { dropzone.style.background = "#cbd5e1"; return false; };
+            dropzone.ondragleave = () => { dropzone.style.background = "#edf2f7"; return false; };
+            dropzone.ondrop = (e) => {
+                e.preventDefault();
+                dropzone.style.background = "#edf2f7";
+                const file = e.dataTransfer.files[0];
+                if (file) { parseAndLoadFileData(file); }
+                return false;
+            };
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) { parseAndLoadFileData(file); }
+        }
+
+        function parseAndLoadFileData(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const container = document.getElementById("wordInputsContainer");
+                    container.innerHTML = ""; // ရှင်းထုတ်ခြင်း
+                    pairCount = 0;
+                    data.forEach(p => { addNewPairRow(p.a, p.b); });
+                    alert("✅ Game Data Loaded Successfully! စာလုံးများ အသင့်ဖြစ်ပါပြီ ဆရာ။");
+                } catch (err) {
+                    alert("❌ Invalid Game Data File!");
+                }
+            };
+            reader.readAsText(file);
         }
 
         function validateAndOpenSetup() {
@@ -936,47 +971,20 @@
             triggerShellShuffleAnimation();
         }
 
-        // --- ပြင်ဆင်လိုက်သည့်နေရာ: လင့်ခ်အရှည်ကြီးမလိုဘဲ နံပါတ် ၄ လုံး (PIN) အဖြစ် ပြောင်းလဲသိမ်းဆည်းပေးမည့် Logic သစ် ---
-        function generateAndGetGamePIN() {
+        // --- ပြင်ဆင်လိုက်သည့်နေရာ: HTML အစား ပေါ့ပါးသော စာသားဖိုင် (.txt) အဖြစ် ထုတ်ပေးမည့်စနစ်သစ် ---
+        function saveGameAsTextFile() {
+            const fileName = prompt("Enter a name for this game file:", "fruit-game");
+            if (!fileName) return;
+
             const compactData = activePairsData.map(p => ({ a: p.a, b: p.b }));
-            const jsonString = JSON.stringify(compactData);
+            const blob = new Blob([JSON.stringify(compactData)], { type: "text/plain" });
 
-            // စာသားများကို ကိန်းဂဏန်း PIN နံပါတ်အဖြစ် ပြောင်းလဲရန် စုစုပေါင်းစာလုံးတန်ဖိုးကို တွက်ချက်ခြင်း (Hashing Algorithm)
-            let hash = 0;
-            for (let i = 0; i < jsonString.length; i++) {
-                hash = jsonString.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            // ၄ လုံးတည်းသော PIN နံပါတ် ထွက်လာစေရန် ညှိယူခြင်း
-            const pinCode = Math.abs(hash % 9000) + 1000;
-
-            // ဆရာ့ရဲ့ ဒေတာတွေကို ကွန်ပျူတာ (သို့မဟုတ် ဖုန်း) ရဲ့ မှတ်ဉာဏ် (LocalStorage) ထဲမှာ PIN နံပါတ်နဲ့ လှမ်းသိမ်းလိုက်ခြင်း
-            localStorage.setItem(`game_pin_${pinCode}`, jsonString);
-
-            // ရလဒ်ကို ဆရာ့ထံ ပြသပေးခြင်း
-            alert(`🎯 Game PIN Code ရပါပြီ ဆရာ! \n\nဤဂိမ်း၏ PIN နံပါတ်မှာ [ ${pinCode} ] ဖြစ်ပါတယ်ဗျာ။ \n\nဒီနံပါတ် ၄ လုံးလေးကိုပဲ မှတ်ထားလိုက်ပါ။ နောက်တစ်ခါ ပြန်ဆော့ချင်ရင်ဖြစ်ဖြစ်၊ ကျောင်းသားတွေကို ပေးဆော့ချင်ရင်ဖြစ်ဖြစ် ဒီနံပါတ်လေး ရိုက်ထည့်လိုက်ရုံပါပဲဗျာ!`);
-        }
-
-        // --- ပြင်ဆင်လိုက်သည့်နေရာ: နံပါတ်ရိုက်လိုက်တာနဲ့ ဒေတာပြန်ခေါ်ပေးမည့် Function ---
-        function loadGameByPin() {
-            const pin = document.getElementById("pinInput").value.trim();
-            if (!pin) { alert("Please enter a PIN number!"); return; }
-
-            const savedData = localStorage.getItem(`game_pin_${pin}`);
-            if (savedData) {
-                activePairsData = JSON.parse(savedData);
-
-                // ဝင်လာသောဒေတာများကို ကွက်လပ်ထဲ ပြန်ဖြည့်ပေးခြင်း
-                const container = document.getElementById("wordInputsContainer");
-                container.innerHTML = ""; // အဟောင်းများရှင်းထုတ်ခြင်း
-
-                activePairsData.forEach((pair, index) => {
-                    addNewPairRow(pair.a, pair.b);
-                });
-
-                alert(`✅ Game PIN [ ${pin} ] Loaded Successfully! စာလုံးတွဲများ အသင့်ဖြစ်ပါပြီ ဆရာ။`);
-            } else {
-                alert(`❌ မတွေ့ပါဘူး ဆရာ။ ဤကွန်ပျူတာထဲမှာ PIN နံပါတ် [ ${pin} ] နဲ့ သိမ်းထားတဲ့ ဂိမ်းမရှိသေးလို့ပါ ခင်ဗျာ။ (ဂိမ်းဆောက်ခဲ့တဲ့ စက်ထဲမှာတင် ပြန်ရိုက်ရမှာ ဖြစ်ပါတယ်)`);
-            }
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = `${fileName}.txt`; // စာသားဖိုင်အဖြစ် သိမ်းဆည်းခြင်း
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
     </script>
 </body>
